@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text('question', 50000);
             $table->text('answer', 50000)->nullable();
             $table->double('cost', 8, 2)->nullable();
-            $table->json('question_embedding')->default(new Expression('(JSON_ARRAY())'));
+            $table->json('vectors')->default(new Expression('(JSON_ARRAY())'));
             $table->timestamps();
         });
     }
