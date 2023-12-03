@@ -3,7 +3,9 @@
 namespace JoshEmbling\Laragenie\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use JoshEmbling\Laragenie\Helpers;
+use JoshEmbling\Laragenie\Models\Laragenie as LaragenieModel;
 use OpenAI;
 use Probots\Pinecone\Client as Pinecone;
 
@@ -54,16 +56,42 @@ class LaragenieCommand extends Command
             $this->userAction($openai, $pinecone);
         }
 
-        $question = $user_question;
+        $question = Str::lower($user_question);
 
-        $this->question('Asking '.config('laragenie.bot.name').", '{$question}'...");
+        $ai = Str::endsWith($question, '--ai');
 
-        $getChunks = $this->askBot($openai, $pinecone, $question);
-        $response = $this->botResponse($openai, $getChunks, $question);
+        $formattedQuestion = $ai ? Str::remove('--ai', $question) : $question;
 
-        $this->info($response->choices[0]->message->content);
+        $laragenie = LaragenieModel::firstOrNew([
+            'question' => $formattedQuestion,
+        ]);
 
-        $this->calculateCost($response->usage->totalTokens);
+        if ($laragenie->exists && ! $ai) {
+            $this->info($laragenie->answer);
+        } else {
+            $this->question('Asking '.config('laragenie.bot.name').", '{$question}'...");
+
+            $questionResponse = $this->askBot($openai, $pinecone, $formattedQuestion);
+
+            $botResponse = $this->botResponse($openai, $questionResponse['data'], $question);
+
+            if ($botResponse) {
+                $answer = $botResponse->choices[0]->message->content;
+                $tokens = $botResponse->usage->totalTokens;
+                $calculatedCost = $this->calculateCost($tokens);
+
+                $laragenie->fill([
+                    'answer' => $answer,
+                    'cost' => $calculatedCost,
+                    'vectors' => $questionResponse['vectors'],
+                ]);
+
+                $laragenie->save();
+
+                $this->info($answer);
+                $this->costResponse($calculatedCost);
+            }
+        }
 
         $this->userAction($openai, $pinecone);
     }
@@ -87,8 +115,10 @@ class LaragenieCommand extends Command
             exit();
         }
 
-        // Get the matching document's text from the metadata
-        return $pinecone_res->json()['matches'][0]['metadata']['text'];
+        return [
+            'data' => $pinecone_res->json()['matches'][0]['metadata']['text'],
+            'vectors' => $openai_res->embeddings[0]->toArray()['embedding'],
+        ];
     }
 
     public function botResponse(OpenAI\Client $openai, $chunks, string $question)
