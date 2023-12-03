@@ -1,10 +1,16 @@
 {
     "name": "joshembling/laragenie",
-    "description": "This is my package laragenie",
+    "description": "A friendly AI bot to help you with your codebase",
     "keywords": [
         "Josh Embling",
         "laravel",
-        "laragenie"
+        "laragenie",
+        "ai",
+        "openai",
+        "laravel prompts",
+        "pinecone",
+        "vector",
+        "php code bot"
     ],
     "homepage": "https://github.com/joshembling/laragenie",
     "license": "MIT",
