@@ -15,6 +15,8 @@ class TestCase extends Orchestra
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'JoshEmbling\\Laragenie\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        $this->withoutMockingConsoleOutput();
     }
 
     protected function getPackageProviders($app)
@@ -27,7 +29,7 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-
+        $app->register(YourPackageServiceProvider::class);
         /*
         $migration = include __DIR__.'/../database/migrations/create_laragenie_table.php.stub';
         $migration->up();
