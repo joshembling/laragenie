@@ -10,7 +10,7 @@ use Probots\Pinecone\Client as Pinecone;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
 
-class BMBotCommand extends Command
+class LaragenieCommand extends Command
 {
     use Helpers\Actions, Helpers\Calculations;
 
