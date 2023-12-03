@@ -56,7 +56,7 @@ class LaragenieCommand extends Command
 
         $question = $user_question;
 
-        $this->question("Asking BM Bot, '{$question}'...");
+        $this->question('Asking '.config('laragenie.bot.name').", '{$question}'...");
 
         $getChunks = $this->askBot($openai, $pinecone, $question);
         $response = $this->botResponse($openai, $getChunks, $question);
@@ -72,14 +72,14 @@ class LaragenieCommand extends Command
     {
         // Use OpenAI to generate context
         $openai_res = $openai->embeddings()->create([
-            'model' => 'text-embedding-ada-002',  // Use an appropriate model
+            'model' => config('laragenie.openai.embedding.model'),
             'input' => $question,
-            'max_tokens' => 5,  // Adjust as needed
+            'max_tokens' => config('laragenie.openai.embedding.max_tokens'),
         ]);
 
         $pinecone_res = $pinecone->index(env('PINECONE_INDEX'))->vectors()->query(
             vector: $openai_res->embeddings[0]->toArray()['embedding'],
-            topK: 2,
+            topK: config('laragenie.pinecone.topK'),
         );
 
         if (empty($pinecone_res->json()['matches'])) {
@@ -100,11 +100,11 @@ class LaragenieCommand extends Command
         try {
             $response = spin(
                 fn () => $openai->chat()->create([
-                    'model' => 'gpt-4-1106-preview',
+                    'model' => config('laragenie.openai.chat.model'),
                     'messages' => [
                         [
                             'role' => 'system',
-                            'content' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks. If the user ever refers to "Brass Monkey", assume this is the name of the project. These are your relevant chunks: '.$chunks,
+                            'content' => config('laragenie.bot.instruction').$chunks,
                         ],
                         [
                             'role' => 'user',
@@ -164,7 +164,7 @@ class LaragenieCommand extends Command
     {
         foreach ($chunks as $idx => $chunk) {
             $vector_response = $openai->embeddings()->create([
-                'model' => 'text-embedding-ada-002',
+                'model' => config('laragenie.openai.embedding.model'),
                 'input' => $chunk,
             ]);
 

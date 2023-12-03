@@ -12,7 +12,7 @@ trait Actions
     public function welcome()
     {
         $this->newLine();
-        $this->warn('🐒 Hello! I\'m BM Bot, how may I assist you today?');
+        $this->warn('Hello, I am '.config('laragenie.bot.name').', how may I assist you today?');
         $this->newLine();
 
         sleep(1);
