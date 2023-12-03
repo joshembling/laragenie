@@ -11,7 +11,7 @@ trait Calculations
         $cost = round(($tokens / 1000) * $rate, 2);
 
         $this->newLine();
-        $this->warn('Cost of this response: $' . $cost);
+        $this->warn('Cost of this response: $'.$cost);
         $this->newLine();
     }
 }

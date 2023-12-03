@@ -46,9 +46,9 @@ class BMBotCommand extends Command
 
     public function userQuestion(OpenAI\Client $openai, Pinecone $pinecone)
     {
-        $user_question = $this->ask('What is your question for ' . config('laragenie.bot.name'));
+        $user_question = $this->ask('What is your question for '.config('laragenie.bot.name'));
 
-        if (!$user_question) {
+        if (! $user_question) {
             $this->error('You must provide a question.');
 
             $this->userAction($openai, $pinecone);
@@ -104,7 +104,7 @@ class BMBotCommand extends Command
                     'messages' => [
                         [
                             'role' => 'system',
-                            'content' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks. If the user ever refers to "Brass Monkey", assume this is the name of the project. These are your relevant chunks: ' . $chunks,
+                            'content' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks. If the user ever refers to "Brass Monkey", assume this is the name of the project. These are your relevant chunks: '.$chunks,
                         ],
                         [
                             'role' => 'user',
@@ -125,7 +125,7 @@ class BMBotCommand extends Command
     {
         $user_path = $this->ask('Enter your file path');
 
-        if (!$user_path) {
+        if (! $user_path) {
             $this->error('You must provide a path.');
 
             $this->userAction($openai, $pinecone);
@@ -133,7 +133,7 @@ class BMBotCommand extends Command
 
         $files = glob($user_path);
 
-        if (!$files) {
+        if (! $files) {
             $this->error("No files found at {$user_path}");
 
             $this->userAction($openai, $pinecone);
@@ -170,7 +170,7 @@ class BMBotCommand extends Command
 
             if ($vector_response) {
                 $pinecone_upsert = $pinecone->index(env('PINECONE_INDEX'))->vectors()->upsert(vectors: [
-                    'id' => str_replace('/', '-', $file) . '-' . $idx,
+                    'id' => str_replace('/', '-', $file).'-'.$idx,
                     //'values' => array_fill(0, 1536, 0.14),
                     'values' => $vector_response->embeddings[0]->toArray()['embedding'],
                     'metadata' => [
@@ -186,7 +186,7 @@ class BMBotCommand extends Command
     {
         $file = $this->ask('What file do you want to remove from your index? (You must provide the full namespace and file extension)');
 
-        if (!$file) {
+        if (! $file) {
             $this->error('You must provide a filename.');
 
             $this->userAction($openai, $pinecone);
@@ -214,7 +214,7 @@ class BMBotCommand extends Command
             }
 
             if ($i === 1 && empty($pinecone_res->json()['vectors'])) {
-                $this->warn('No indexes were found for the file ' . $file);
+                $this->warn('No indexes were found for the file '.$file);
                 break;
             } elseif ($i === 1) {
                 $choice = select(
@@ -244,7 +244,7 @@ class BMBotCommand extends Command
 
             if (empty($pinecone_res->json()['vectors'])) {
                 $this->newLine();
-                $this->info('Vectors have been deleted that were associated with ' . $file);
+                $this->info('Vectors have been deleted that were associated with '.$file);
 
                 break;
             }
