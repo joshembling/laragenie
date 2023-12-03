@@ -10,6 +10,11 @@ trait Calculations
 
         $cost = round(($tokens / 1000) * $rate, 2);
 
+        return $cost;
+    }
+
+    public function costResponse(float $cost)
+    {
         $this->newLine();
         $this->warn('Cost of this response: $'.$cost);
         $this->newLine();
