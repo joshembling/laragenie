@@ -62,11 +62,13 @@ class LaragenieCommand extends Command
 
         $formattedQuestion = $ai ? Str::remove('--ai', $question) : $question;
 
-        $laragenie = LaragenieModel::firstOrNew([
-            'question' => $formattedQuestion,
-        ]);
+        if (config('laragenie.database.fetch') || config('laragenie.database.save')) {
+            $laragenie = LaragenieModel::firstOrNew([
+                'question' => $formattedQuestion,
+            ]);
+        }
 
-        if ($laragenie->exists && ! $ai) {
+        if ($laragenie->exists && config('laragenie.database.fetch') && ! $ai) {
             $this->info($laragenie->answer);
         } else {
             $this->question('Asking '.config('laragenie.bot.name').", '{$question}'...");
@@ -80,13 +82,15 @@ class LaragenieCommand extends Command
                 $tokens = $botResponse->usage->totalTokens;
                 $calculatedCost = $this->calculateCost($tokens);
 
-                $laragenie->fill([
-                    'answer' => $answer,
-                    'cost' => $calculatedCost,
-                    'vectors' => $questionResponse['vectors'],
-                ]);
+                if (config('laragenie.database.save')) {
+                    $laragenie->fill([
+                        'answer' => $answer,
+                        'cost' => $calculatedCost,
+                        'vectors' => $questionResponse['vectors'],
+                    ]);
 
-                $laragenie->save();
+                    $laragenie->save();
+                }
 
                 $this->info($answer);
                 $this->costResponse($calculatedCost);
