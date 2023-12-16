@@ -20,6 +20,7 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
+
     <coverage>
         <report>
             <html outputDirectory="build/coverage"/>

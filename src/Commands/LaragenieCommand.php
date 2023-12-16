@@ -39,14 +39,14 @@ class LaragenieCommand extends Command
         $pinecone = new Pinecone(env('PINECONE_API_KEY'), env('PINECONE_ENVIRONMENT'));
 
         match ($this->welcome()) {
-            'q' => $this->userQuestion($openai, $pinecone),
+            'q' => $this->askQuestion($openai, $pinecone),
             'i' => $this->getFilesToIndex($openai, $pinecone),
             'r' => $this->removeIndexedFiles($openai, $pinecone),
             'o' => $this->somethingElse($openai, $pinecone),
         };
     }
 
-    public function userQuestion(OpenAI\Client $openai, Pinecone $pinecone)
+    public function askQuestion(OpenAI\Client $openai, Pinecone $pinecone)
     {
         $user_question = $this->ask('What is your question for '.config('laragenie.bot.name'));
 
@@ -54,8 +54,13 @@ class LaragenieCommand extends Command
             $this->error('You must provide a question.');
 
             $this->userAction($openai, $pinecone);
+        } else {
+            $this->userQuestion($openai, $pinecone, $user_question);
         }
+    }
 
+    public function userQuestion(OpenAI\Client $openai, Pinecone $pinecone, string $user_question)
+    {
         $question = Str::lower($user_question);
 
         $ai = Str::endsWith($question, '--ai');
@@ -135,6 +140,7 @@ class LaragenieCommand extends Command
             $response = spin(
                 fn () => $openai->chat()->create([
                     'model' => config('laragenie.openai.chat.model'),
+                    'temperature' => 0.1,
                     'messages' => [
                         [
                             'role' => 'system',
