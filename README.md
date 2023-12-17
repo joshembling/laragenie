@@ -115,7 +115,7 @@ PINECONE_INDEX=your-index
 
 Once these are setup you will be able to run the following command from your root directory to get started:
 
-```
+```bash
 php artisan laragenie
 ```
 
@@ -134,11 +134,11 @@ Type in any question based around your codebase.
 
 You may want to force AI useage if you are unsatisfied with the answer (if fetched from your database). If you have database credentials in your Laragenie config set to true such as:
 
-```
-    'database' => [
-        'fetch' => true, // Fetch saved answers from previous questions
-        'save' => true, // Save answers to the database
-    ],
+```php
+'database' => [
+    'fetch' => true, // Fetch saved answers from previous questions
+    'save' => true, // Save answers to the database
+],
 ```
 
 You will need to end all questions with `--ai` to force AI useage e.g. `Tell me about how Users are saved to the database --ai`.
@@ -161,7 +161,7 @@ You can remove indexed files using the same method as above when you select `Rem
 
 Strict removal, i.e. prompts before files are removed can be turned on/off by toggling the boolean 'strict' attribute in your config.
 
-```
+```php
 'indexes' => [
     'removal' => [
         'strict' => true,
