@@ -35,10 +35,10 @@ trait Actions
         $choice = select(
             'Do you want to do something else?',
             [
-                'x' => 'No thanks, goodbye! 👋 ',
                 'q' => 'Ask a question 🙋‍♂️',
                 'i' => 'Index files 🗂',
                 'r' => 'Remove indexed files 🚽',
+                'x' => 'No thanks, goodbye! 👋 ',
             ],
         );
 
