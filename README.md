@@ -3,19 +3,19 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 [![Total Downloads](https://img.shields.io/packagist/dt/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 
-Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand your Laravel codebase after a few simple steps: 
+Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand your Laravel codebase following a few simple steps: 
 
 1. Set up your env variables [OpenAI and Pinecone](#openai-and-pinecone)
 2. Publish and update the Laragenie config
 3. Index your files and/or full directories
 4. Ask your questions
 
-It's that easy! You will instantly speed up your workflow and start working hand-in-hand with the most knowledgeable colleague you've ever had. 
+It's as simple as that! Accelerate your workflow instantly and collaborate seamlessly with the quickest and most knowledgeable 'colleague' you've ever had.
 
-This is a particularly useful bot that can be used to:
-- Onboard developer's to new projects
-- Help junior's and senior's get to grips with how the codebase works (a much cheaper scenario than 1-1's with other dev's)
-- Have handy on a daily basis whenever and however it is needed.
+This is a particularly useful CLI bot that can be used to:
+- Onboard developer's to new projects.
+- Assist both junior and senior developers in understanding the codebase, offering a cost-effective alternative to multiple one-on-one sessions with other developers.
+- Provide convenient and readily available support on a daily basis as needed.
 
 ## Contents
 
