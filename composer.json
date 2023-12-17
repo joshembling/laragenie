@@ -1,6 +1,6 @@
 {
     "name": "joshembling/laragenie",
-    "description": "A friendly AI bot to help you with your codebase",
+    "description": "An AI bot you run on the command line that can read and understand your Laravel codebase.",
     "keywords": [
         "Josh Embling",
         "laravel",
