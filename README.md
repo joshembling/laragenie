@@ -119,7 +119,7 @@ PINECONE_INDEX=your-index
 
 ### Running Laragenie on the command line
 
-Once these are setup you will be able to run the following command from your root directory to get started:
+Once these are setup you will be able to run the following command from your root directory:
 
 ```bash
 php artisan laragenie
@@ -136,38 +136,33 @@ Use the arrow keys to toggle through the options and enter to select the command
 
 #### Ask a question
 
-Type in any question based around your codebase. 
+Note: you should only run this action once you have some files indexed.
 
-You may want to force AI useage if you are unsatisfied with the answer (if fetched from your database). If you have database credentials in your Laragenie config set to true such as:
+Type in any question relating to your codebase. Answers can be generated in markdown format with code examples. You will also see the cost of each response (in US dollars), which will help keep close track of the expense. Cost of the response is added to your database, if enabled.
 
-```php
-'database' => [
-    'fetch' => true, // Fetch saved answers from previous questions
-    'save' => true, // Save answers to the database
-],
-```
+You may want to force AI useage (prevent fetching from the database where available) if you are unsatisfied with the initial answer.
 
-You will need to end all questions with `--ai` to force AI useage e.g. `Tell me about how Users are saved to the database --ai`.
+To force AI usage, you will need to end all questions with `--ai` e.g. `Tell me about how Users are saved to the database --ai`.
 
-Once this is saved, the next time this identical question is asked, the command will always attempt to fetch from the database first. You can toggle these paramaters off if you don't want anything to be saved. 
-
-Answers can be generated in text form with code examples. You will also see the cost of each response (in US dollars) to keep close track of the expense.
+This will ensure the AI model will re-assess your request, and outputs another answer (this could be the same answer depending on the GPT model you are using). 
 
 #### Index files
 
-Index files by inputting a file name with it's namespace e.g.
+You can index files by inputting a file name with it's namespace e.g.
 
 `App/Models/User.php`
 
-You can also index files by indexing a full directory and using a wildcard to select multiple files e.g.
+You may also index files by inputting a full directory, then use a wildcard (*) to select multiple files e.g.
 
 `App/Models/*` or `App/Models/*.php`
 
+Please note: if you are using the '*' wildcard without an extension, this directory must only contain files and not folders, otherwise an exception will be thrown.
+
 #### Remove indexed files
 
-You can remove indexed files using the same method as above when you select `Remove data associated with a directory or specific file` as an option.
+You can remove indexed files using the exact same methods as above. Select the `Remove data associated with a directory or specific file` prompt as an option.
 
-Strict removal, i.e. prompts before files are removed can be turned on/off by toggling the boolean 'strict' attribute in your config.
+Strict removal, i.e. warning messages before files are removed, can be turned on/off by changing the 'strict' attribute to false in your config.
 
 ```php
 'indexes' => [
@@ -177,11 +172,14 @@ Strict removal, i.e. prompts before files are removed can be turned on/off by to
 ],
 ```
 
-You can also remove all indexes by selecting `Remove all chunked data`. Be warned that this will truncate your entire vector database.
+You may also remove all indexes by selecting `Remove all chunked data`. Be warned that this will truncate your entire vector database and cannot be reversed.
 
 #### Stopping Laragenie
 
-You can stop Laragenie by either doing `ctrl + c` (Linux/Mac), `ctrl + shift + c` (Windows), or selecting `No thanks, goodbye` in the user menu after 1 prompt has run.
+You can stop Laragenie using the following methods: 
+- `ctrl + c` (Linux/Mac)
+- `ctrl + shift + c` (Windows)
+- Selecting `No thanks, goodbye` in the user menu after at least 1 prompt has run.
 
 ## Changelog
 
