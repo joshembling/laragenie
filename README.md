@@ -1,19 +1,31 @@
-# This is my package laragenie
+# Laragenie - AI built to understand your Laravel codebase
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/joshembling/laragenie/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/joshembling/laragenie/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/joshembling/laragenie/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/joshembling/laragenie/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand your Laravel codebase after a few simple steps: 
 
-## Support us
+1. Set up your env variables and Laragenie config details
+2. Index your files or directories
+3. Ask your questions
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laragenie.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laragenie)
+It's that easy!
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
+## Contents
 
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+-   [Installation](#installation)
+-   [Useage](#usage)
+    -   [OpenAI and Pinecone](#openai-and-pinecone)
+    -   [Running Laragenie on the command line](#running-laragenie-on-the-command-line)
+    -   [Ask a question](#ask-a-question)
+    -   [Index files](#index-files)
+    -   [Remove indexed files](#remove-indexed-files)
+    -   [Stopping Laragenie](#stopping-laragenie)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [Security Vulnerabilities](#security-vulnerabilities)
+- [Credits](#credits)
+- [Licence](#license)
 
 ## Installation
 
@@ -40,27 +52,113 @@ This is the contents of the published config file:
 
 ```php
 return [
+    'bot' => [
+        'name' => 'Laragenie', // The name of your chatbot
+        'instructions' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks.', // The chatbot instructions
+    ],
+
+    'database' => [
+        'fetch' => true, // Fetch saved answers from previous questions
+        'save' => true, // Save answers to the database
+    ],
+
+    'openai' => [
+        'embedding' => [
+            'model' => 'text-embedding-ada-002', // Text embedding model (OpenAI)
+            'max_tokens' => 5, // Maximum tokens to use when embedding
+        ],
+        'chat' => [
+            'model' => 'gpt-4-1106-preview', // Your OpenAI GPT model
+            'temperature' => 0.1, // Set temperature on the model
+        ],
+    ],
+
+    'pinecone' => [
+        'topK' => 2, // Pinecone indexes to fetch
+    ],
+
+    'chunks' => [
+        'size' => 1000, // Maximum caracters to separate chunks
+    ],
+
+    'indexes' => [
+        'removal' => [
+            'strict' => true, // User prompt on deletion requests of indexes
+        ],
+    ],
 ];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laragenie-views"
 ```
 
 ## Usage
 
-```php
-$laragenie = new JoshEmbling\Laragenie();
-echo $laragenie->echoPhrase('Hello, JoshEmbling!');
+### OpenAI and Pinecone
+
+This package uses (OpenAI)[https://openai.com/] to process and generate responses and (Pinecone)[https://www.pinecone.io/] to index your data. 
+
+You will need to create an OpenAI account with credits, generate an API key and add it to your .env file:
+```
+OPENAI_API_KEY=your-open-ai-key
 ```
 
-## Testing
+You will also need to create a Pinecone account. 
 
-```bash
-composer test
+The easiest way to start is with a free account - create an environment with 1536 dimensions and name it, generate an api key and add these details to your .env file:
 ```
+PINECONE_API_KEY=your-pinecone-api-key
+PINECONE_ENVIRONMENT=gcp-starter
+PINECONE_INDEX=your-index
+```
+
+### Running Laragenie on the command line
+
+Once these are setup you will be able to run the following command from your root directory to get started:
+
+```
+php artisan laragenie
+```
+
+You will get 4 options:
+
+1. Ask a question
+2. Index files
+3. Remove indexed files
+4. Something else
+
+Use the arrow keys to toggle through the options and enter to select the command.
+
+#### Ask a question
+
+Type in any question based around your codebase. 
+
+#### Index files
+
+Index files by inputting a file name with it's namespace e.g.
+
+`App/Models/User.php`
+
+You can also index files by indexing a full directory and using a wildcard to select multiple files e.g.
+
+`App/Models/*` or `App/Models/*.php`
+
+#### Remove indexed files
+
+You can remove indexed files using the same method as above when you select `Remove data associated with a directory or specific file` as an option.
+
+Strict removal, i.e. prompts before files are removed can be turned on/off by toggling the boolean 'strict' attribute in your config.
+
+```
+'indexes' => [
+    'removal' => [
+        'strict' => true,
+    ],
+],
+```
+
+You can also remove all indexes by selecting `Remove all chunked data`. Be warned that this will truncate your entire vector database.
+
+#### Stopping Laragenie
+
+You can stop Laragenie by either doing `ctrl + c` (Linux/Mac), `ctrl + shift + c` (Windows), or selecting `No thanks, goodbye` in the user menu after 1 prompt has run.
 
 ## Changelog
 
