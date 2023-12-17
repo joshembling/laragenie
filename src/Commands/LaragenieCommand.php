@@ -307,8 +307,8 @@ class LaragenieCommand extends Command
                 }
 
                 if (empty($pinecone_res->json()['vectors'])) {
-                    $this->newLine();
                     $this->info('Vectors have been deleted that were associated with '.$file);
+                    $this->newLine();
 
                     break;
                 }
