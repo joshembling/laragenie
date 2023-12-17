@@ -5,11 +5,17 @@
 
 Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand your Laravel codebase after a few simple steps: 
 
-1. Set up your env variables and Laragenie config details
-2. Index your files or directories
-3. Ask your questions
+1. Set up your env variables [OpenAI and Pinecone](#openai-and-pinecone)
+2. Publish and update the Laragenie config
+3. Index your files and/or full directories
+4. Ask your questions
 
-It's that easy!
+It's that easy! You will instantly speed up your workflow and start working hand-in-hand with the most knowledgeable colleague you've ever had. 
+
+This is a particularly useful bot that can be used to:
+- Onboard developer's to new projects
+- Help junior's and senior's get to grips with how the codebase works (a much cheaper scenario than 1-1's with other dev's)
+- Have handy on a daily basis whenever and however it is needed.
 
 ## Contents
 
@@ -144,6 +150,8 @@ You may want to force AI useage if you are unsatisfied with the answer (if fetch
 You will need to end all questions with `--ai` to force AI useage e.g. `Tell me about how Users are saved to the database --ai`.
 
 Once this is saved, the next time this identical question is asked, the command will always attempt to fetch from the database first. You can toggle these paramaters off if you don't want anything to be saved. 
+
+Answers can be generated in text form with code examples. You will also see the cost of each response (in US dollars) to keep close track of the expense.
 
 #### Index files
 
