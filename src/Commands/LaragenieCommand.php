@@ -140,7 +140,7 @@ class LaragenieCommand extends Command
             $response = spin(
                 fn () => $openai->chat()->create([
                     'model' => config('laragenie.openai.chat.model'),
-                    'temperature' => 0.1,
+                    'temperature' => config('laragenie.openai.chat.temperature'),
                     'messages' => [
                         [
                             'role' => 'system',
@@ -182,19 +182,24 @@ class LaragenieCommand extends Command
         $this->line('Indexing files...');
 
         foreach ($files as $file) {
+            $this->warn('Indexing "'.$file.'" ...');
+
             $contents = file_get_contents($file);
 
-            $chunk_contents = str_split($contents, 1000);
+            $chunk_contents = str_split($contents, config('laragenie.chunks.size'));
 
             $chunks = array_map(function ($chunk) use ($file) {
                 return "Title: {$file} {$chunk}";
             }, $chunk_contents);
 
             $this->indexFiles($chunks, $file, $openai, $pinecone);
+
+            $this->info($file.' finished indexing');
+            $this->newLine();
         }
 
         $this->newLine();
-        $this->info('Files have been indexed!');
+        $this->info('All files have been indexed! 🎉');
         $this->newLine();
 
         $this->userAction($openai, $pinecone);
@@ -224,6 +229,18 @@ class LaragenieCommand extends Command
 
     public function removeIndexedFiles(OpenAI\Client $openai, Pinecone $pinecone)
     {
+        $remove = $this->removeAction();
+
+        if ($remove === 'all') {
+            $confirm = $this->removeAllActionConfirm();
+
+            if ($confirm === 'y') {
+                $this->flushFiles($openai, $pinecone);
+            } else {
+                $this->userAction($openai, $pinecone);
+            }
+        }
+
         $file = $this->ask('What file do you want to remove from your index? (You must provide the full namespace and file extension)');
 
         if (! $file) {
@@ -237,6 +254,17 @@ class LaragenieCommand extends Command
         $this->question('Finding vectors...');
 
         $this->findFilesToRemove($pinecone, $file, $formatted_filename);
+
+        $this->userAction($openai, $pinecone);
+    }
+
+    public function flushFiles(OpenAI\Client $openai, Pinecone $pinecone)
+    {
+        $pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
+            deleteAll: true
+        );
+
+        $this->info('All files have been removed.');
 
         $this->userAction($openai, $pinecone);
     }
@@ -293,7 +321,7 @@ class LaragenieCommand extends Command
 
     public function somethingElse(OpenAI\Client $openai, Pinecone $pinecone)
     {
-        $this->info('You can email josh.embling@parall.ax to suggest another feature.');
+        $this->info('You can contact @joshembling on Github to suggest another feature.');
 
         $this->userAction($openai, $pinecone);
     }

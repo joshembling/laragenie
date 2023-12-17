@@ -43,10 +43,32 @@ trait Actions
         );
 
         match ($choice) {
-            'q' => $this->userQuestion($openai, $pinecone),
+            'q' => $this->askQuestion($openai, $pinecone),
             'i' => $this->getFilesToIndex($openai, $pinecone),
             'r' => $this->removeIndexedFiles($openai, $pinecone),
             'x' => exit(),
         };
+    }
+
+    public function removeAction()
+    {
+        return select(
+            'What do you want to do?',
+            [
+                'one' => 'Remove data associated with one file',
+                'all' => 'Remove all chunked data',
+            ],
+        );
+    }
+
+    public function removeAllActionConfirm()
+    {
+        return select(
+            'Are you sure? This cannot be undone!',
+            [
+                'y' => 'Yes',
+                'n' => 'No',
+            ],
+        );
     }
 }
