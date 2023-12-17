@@ -30,4 +30,10 @@ return [
     'chunks' => [
         'size' => 1000,
     ],
+
+    'indexes' => [
+        'removal' => [
+            'strict' => true,
+        ],
+    ],
 ];
