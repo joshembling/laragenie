@@ -19,10 +19,15 @@ return [
         ],
         'chat' => [
             'model' => 'gpt-4-1106-preview',
+            'temperature' => 0.1,
         ],
     ],
 
     'pinecone' => [
         'topK' => 2,
+    ],
+
+    'chunks' => [
+        'size' => 1000,
     ],
 ];
