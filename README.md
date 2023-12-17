@@ -95,7 +95,7 @@ return [
 
 ### OpenAI and Pinecone
 
-This package uses (OpenAI)[https://openai.com/] to process and generate responses and (Pinecone)[https://www.pinecone.io/] to index your data. 
+This package uses [OpenAI](https://openai.com/) to process and generate responses and [Pinecone](https://www.pinecone.io/) to index your data. 
 
 You will need to create an OpenAI account with credits, generate an API key and add it to your .env file:
 ```
