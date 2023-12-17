@@ -241,21 +241,79 @@ class LaragenieCommand extends Command
             }
         }
 
-        $file = $this->ask('What file do you want to remove from your index? (You must provide the full namespace and file extension)');
+        $files = $this->ask('What file(s) do you want to remove from your index? (You can provide the full namespace and file extension or a directory with a wildcard)');
 
-        if (! $file) {
+        if (! $files) {
             $this->error('You must provide a filename.');
 
             $this->userAction($openai, $pinecone);
         }
 
-        $formatted_filename = str_replace('/', '-', $file);
-
         $this->question('Finding vectors...');
 
-        $this->findFilesToRemove($pinecone, $file, $formatted_filename);
+        $this->findFilesToRemove($pinecone, $files);
 
         $this->userAction($openai, $pinecone);
+    }
+
+    public function findFilesToRemove(Pinecone $pinecone, string $user_files)
+    {
+        $files = glob($user_files);
+
+        foreach ($files as $file) {
+            $formatted_filename = str_replace('/', '-', $file);
+
+            $this->warn('Attempting to remove all "'.$file.'" indexes...');
+
+            for ($i = 0; $i < 100; $i++) {
+                try {
+                    $pinecone_res = $pinecone->index(env('PINECONE_INDEX'))->vectors()->fetch([
+                        "{$formatted_filename}-{$i}",
+                    ]);
+                } catch (\Throwable $th) {
+                    $this->error('There has been an error.');
+                    break;
+                }
+
+                if ($i === 0 && empty($pinecone_res->json()['vectors'])) {
+                    $this->warn('No indexes were found for the file '.$file);
+                    break;
+                }
+
+                if (config('laragenie.indexes.removal.strict') && $i === 0) {
+                    $choice = select(
+                        'Vectors have been found, are you sure you want to delete them? 🤔',
+                        [
+                            'y' => 'Yes',
+                            'n' => 'No',
+                        ],
+                    );
+
+                    if ($choice === 'y') {
+                        $this->question("Alright, let's bin those 🚽");
+                    } else {
+                        $this->info('Nothing has been deleted 😅');
+                        break;
+                    }
+                }
+
+                try {
+                    $response = $pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
+                        ids: ["{$formatted_filename}-{$i}"],
+                        deleteAll: false
+                    );
+                } catch (\Throwable $th) {
+                    $this->error($th);
+                }
+
+                if (empty($pinecone_res->json()['vectors'])) {
+                    $this->newLine();
+                    $this->info('Vectors have been deleted that were associated with '.$file);
+
+                    break;
+                }
+            }
+        }
     }
 
     public function flushFiles(OpenAI\Client $openai, Pinecone $pinecone)
@@ -267,56 +325,6 @@ class LaragenieCommand extends Command
         $this->info('All files have been removed.');
 
         $this->userAction($openai, $pinecone);
-    }
-
-    public function findFilesToRemove(Pinecone $pinecone, string $file, string $formatted_filename)
-    {
-        for ($i = 1; $i < 100; $i++) {
-            try {
-                $pinecone_res = $pinecone->index(env('PINECONE_INDEX'))->vectors()->fetch([
-                    "{$formatted_filename}-{$i}",
-                ]);
-            } catch (\Throwable $th) {
-                $this->error('There has been an error.');
-                break;
-            }
-
-            if ($i === 1 && empty($pinecone_res->json()['vectors'])) {
-                $this->warn('No indexes were found for the file '.$file);
-                break;
-            } elseif ($i === 1) {
-                $choice = select(
-                    'Vectors have been found, are you sure you want to delete them? 🤔',
-                    [
-                        'y' => 'Yes',
-                        'n' => 'No',
-                    ],
-                );
-
-                if ($choice === 'y') {
-                    $this->question("Alright, let's bin those 🚽");
-                } else {
-                    $this->info('Nothing has been deleted 😅');
-                    break;
-                }
-            }
-
-            try {
-                $response = $pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
-                    ids: ["{$formatted_filename}-{$i}"],
-                    deleteAll: false
-                );
-            } catch (\Throwable $th) {
-                $this->error($th);
-            }
-
-            if (empty($pinecone_res->json()['vectors'])) {
-                $this->newLine();
-                $this->info('Vectors have been deleted that were associated with '.$file);
-
-                break;
-            }
-        }
     }
 
     public function somethingElse(OpenAI\Client $openai, Pinecone $pinecone)

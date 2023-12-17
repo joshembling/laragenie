@@ -55,7 +55,7 @@ trait Actions
         return select(
             'What do you want to do?',
             [
-                'one' => 'Remove data associated with one file',
+                'one' => 'Remove data associated with a directory or specific file',
                 'all' => 'Remove all chunked data',
             ],
         );
