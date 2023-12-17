@@ -42,6 +42,8 @@ php artisan vendor:publish --tag="laragenie-migrations"
 php artisan migrate
 ```
 
+If you don't want to publish migrations, you must toggle the database credentials in your Laragenie config to false. (See config file details below).
+
 You can publish the config file with:
 
 ```bash
@@ -129,6 +131,19 @@ Use the arrow keys to toggle through the options and enter to select the command
 #### Ask a question
 
 Type in any question based around your codebase. 
+
+You may want to force AI useage if you are unsatisfied with the answer (if fetched from your database). If you have database credentials in your Laragenie config set to true such as:
+
+```
+    'database' => [
+        'fetch' => true, // Fetch saved answers from previous questions
+        'save' => true, // Save answers to the database
+    ],
+```
+
+You will need to end all questions with `--ai` to force AI useage e.g. `Tell me about how Users are saved to the database --ai`.
+
+Once this is saved, the next time this identical question is asked, the command will always attempt to fetch from the database first. You can toggle these paramaters off if you don't want anything to be saved. 
 
 #### Index files
 
