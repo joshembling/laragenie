@@ -2,6 +2,7 @@
 
 namespace JoshEmbling\Laragenie\Helpers;
 
+use JoshEmbling\Laragenie\Helpers;
 use OpenAI;
 use Probots\Pinecone\Client as Pinecone;
 
@@ -9,11 +10,12 @@ use function Laravel\Prompts\select;
 
 trait Actions
 {
+    use Helpers\Formatting;
+
     public function welcome()
     {
         $this->newLine();
-        $this->warn(config('laragenie.bot.welcome'));
-        $this->newLine();
+        $this->textWarning(config('laragenie.bot.welcome'));
 
         sleep(1);
 

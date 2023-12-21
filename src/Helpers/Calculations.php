@@ -2,8 +2,12 @@
 
 namespace JoshEmbling\Laragenie\Helpers;
 
+use JoshEmbling\Laragenie\Helpers;
+
 trait Calculations
 {
+    use Helpers\Formatting;
+
     public function calculateCost(int $tokens)
     {
         $rate = 0.03;
@@ -16,7 +20,6 @@ trait Calculations
     public function costResponse(float $cost)
     {
         $this->newLine();
-        $this->warn('Cost of this response: $'.$cost);
-        $this->newLine();
+        $this->textWarning('Cost of this response: $'.$cost);
     }
 }

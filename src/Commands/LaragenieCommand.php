@@ -14,7 +14,7 @@ use function Laravel\Prompts\spin;
 
 class LaragenieCommand extends Command
 {
-    use Helpers\Actions, Helpers\Calculations;
+    use Helpers\Actions, Helpers\Calculations, Helpers\Formatting;
 
     /**
      * The name and signature of the console command.
@@ -51,7 +51,7 @@ class LaragenieCommand extends Command
         $user_question = $this->ask('What is your question for '.config('laragenie.bot.name'));
 
         if (! $user_question) {
-            $this->error('You must provide a question.');
+            $this->textError('You must provide a question.');
 
             $this->userAction($openai, $pinecone);
         } else {
@@ -74,7 +74,7 @@ class LaragenieCommand extends Command
         }
 
         if ($laragenie->exists && config('laragenie.database.fetch') && ! $ai) {
-            $this->info($laragenie->answer);
+            $this->textOutput($laragenie->answer);
         } else {
             $this->question('Asking '.config('laragenie.bot.name').", '{$question}'...");
 
@@ -97,7 +97,7 @@ class LaragenieCommand extends Command
                     $laragenie->save();
                 }
 
-                $this->info($answer);
+                $this->textOutput($answer);
                 $this->costResponse($calculatedCost);
             }
         }
@@ -120,7 +120,7 @@ class LaragenieCommand extends Command
         );
 
         if (empty($pinecone_res->json()['matches'])) {
-            $this->error('There are no indexed files.');
+            $this->textError('There are no indexed files.');
             exit();
         }
 
@@ -133,8 +133,7 @@ class LaragenieCommand extends Command
     public function botResponse(OpenAI\Client $openai, $chunks, string $question)
     {
         $this->newLine();
-        $this->line('Generating answer...');
-        $this->newLine();
+        $this->textNote('Generating answer...');
 
         try {
             $response = spin(
@@ -154,7 +153,7 @@ class LaragenieCommand extends Command
                 ])
             );
         } catch (\Throwable $th) {
-            $this->error($th->getMessage());
+            $this->textError($th->getMessage());
             exit();
         }
 
@@ -166,7 +165,7 @@ class LaragenieCommand extends Command
         $user_path = $this->ask('Enter your file path');
 
         if (! $user_path) {
-            $this->error('You must provide a path.');
+            $this->textError('You must provide a path.');
 
             $this->userAction($openai, $pinecone);
         }
@@ -174,15 +173,15 @@ class LaragenieCommand extends Command
         $files = glob($user_path);
 
         if (! $files) {
-            $this->error("No files found at {$user_path}");
+            $this->textError("No files found at {$user_path}");
 
             $this->userAction($openai, $pinecone);
         }
 
-        $this->line('Indexing files...');
+        $this->textNote('Indexing files...');
 
         foreach ($files as $file) {
-            $this->warn('Indexing "'.$file.'" ...');
+            $this->textWarning('Indexing "'.$file.'" ...');
 
             $contents = file_get_contents($file);
 
@@ -194,12 +193,12 @@ class LaragenieCommand extends Command
 
             $this->indexFiles($chunks, $file, $openai, $pinecone);
 
-            $this->info($file.' finished indexing');
+            $this->textOutput($file.' finished indexing');
             $this->newLine();
         }
 
         $this->newLine();
-        $this->info('All files have been indexed! 🎉');
+        $this->textOutput('All files have been indexed! 🎉');
         $this->newLine();
 
         $this->userAction($openai, $pinecone);
@@ -237,6 +236,8 @@ class LaragenieCommand extends Command
             if ($confirm === 'y') {
                 $this->flushFiles($openai, $pinecone);
             } else {
+                $this->textOutput('No files have been deleted.');
+
                 $this->userAction($openai, $pinecone);
             }
         }
@@ -244,7 +245,7 @@ class LaragenieCommand extends Command
         $files = $this->ask('What file(s) do you want to remove from your index? (You can provide the full namespace and file extension or a directory with a wildcard)');
 
         if (! $files) {
-            $this->error('You must provide a filename.');
+            $this->textError('You must provide at least one filename or a directory.');
 
             $this->userAction($openai, $pinecone);
         }
@@ -263,7 +264,7 @@ class LaragenieCommand extends Command
         foreach ($files as $file) {
             $formatted_filename = str_replace('/', '-', $file);
 
-            $this->warn('Attempting to remove all "'.$file.'" indexes...');
+            $this->textWarning('Attempting to remove all "'.$file.'" indexes...');
 
             for ($i = 0; $i < 100; $i++) {
                 try {
@@ -271,12 +272,12 @@ class LaragenieCommand extends Command
                         "{$formatted_filename}-{$i}",
                     ]);
                 } catch (\Throwable $th) {
-                    $this->error('There has been an error.');
+                    $this->textError('There has been an error.');
                     break;
                 }
 
                 if ($i === 0 && empty($pinecone_res->json()['vectors'])) {
-                    $this->warn('No indexes were found for the file '.$file);
+                    $this->textWarning('No indexes were found for the file '.$file);
                     break;
                 }
 
@@ -292,7 +293,7 @@ class LaragenieCommand extends Command
                     if ($choice === 'y') {
                         $this->question("Alright, let's bin those 🚽");
                     } else {
-                        $this->info('Nothing has been deleted 😅');
+                        $this->textOutput('Nothing has been deleted 😅');
                         break;
                     }
                 }
@@ -303,11 +304,11 @@ class LaragenieCommand extends Command
                         deleteAll: false
                     );
                 } catch (\Throwable $th) {
-                    $this->error($th);
+                    $this->textError($th);
                 }
 
                 if (empty($pinecone_res->json()['vectors'])) {
-                    $this->info('Vectors have been deleted that were associated with '.$file);
+                    $this->textOutput('Vectors have been deleted that were associated with '.$file);
                     $this->newLine();
 
                     break;
@@ -322,14 +323,14 @@ class LaragenieCommand extends Command
             deleteAll: true
         );
 
-        $this->info('All files have been removed.');
+        $this->textOutput('All files have been removed.');
 
         $this->userAction($openai, $pinecone);
     }
 
     public function somethingElse(OpenAI\Client $openai, Pinecone $pinecone)
     {
-        $this->info('You can contact @joshembling on Github to suggest another feature.');
+        $this->textOutput('You can contact @joshembling on Github to suggest another feature.');
 
         $this->userAction($openai, $pinecone);
     }
