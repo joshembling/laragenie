@@ -4,6 +4,7 @@
 return [
     'bot' => [
         'name' => 'Laragenie',
+        'welcome' => 'Hello, I am Laragenie, how may I assist you today?',
         'instructions' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks.',
     ],
 
