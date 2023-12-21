@@ -3,7 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 [![Total Downloads](https://img.shields.io/packagist/dt/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 
-Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand your Laravel codebase following a few simple steps: 
+Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand your Laravel codebase following a few simple steps:
 
 1. Set up your env variables [OpenAI and Pinecone](#openai-and-pinecone)
 2. Publish and update the Laragenie config
@@ -13,12 +13,14 @@ Laragenie is an AI chatbot that runs on the command line. It will be able to rea
 It's as simple as that! Accelerate your workflow instantly and collaborate seamlessly with the quickest and most knowledgeable 'colleague' you've ever had.
 
 This is a particularly useful CLI bot that can be used to:
-- Onboard developer's to new projects.
-- Assist both junior and senior developers in understanding the codebase, offering a cost-effective alternative to multiple one-on-one sessions with other developers.
-- Provide convenient and readily available support on a daily basis as needed.
+
+-   Onboard developer's to new projects.
+-   Assist both junior and senior developers in understanding the codebase, offering a cost-effective alternative to multiple one-on-one sessions with other developers.
+-   Provide convenient and readily available support on a daily basis as needed.
 
 ## Contents
 
+-   [Requirements](#requirements)
 -   [Installation](#installation)
 -   [Useage](#usage)
     -   [OpenAI and Pinecone](#openai-and-pinecone)
@@ -27,11 +29,20 @@ This is a particularly useful CLI bot that can be used to:
     -   [Index files](#index-files)
     -   [Remove indexed files](#remove-indexed-files)
     -   [Stopping Laragenie](#stopping-laragenie)
-- [Changelog](#changelog)
-- [Contributing](#contributing)
-- [Security Vulnerabilities](#security-vulnerabilities)
-- [Credits](#credits)
-- [Licence](#license)
+-   [Changelog](#changelog)
+-   [Contributing](#contributing)
+-   [Security Vulnerabilities](#security-vulnerabilities)
+-   [Credits](#credits)
+-   [Licence](#license)
+
+## Requirements
+
+-   Laravel 10 or greater
+-   PHP 8 or greater
+
+This package uses [Laravel Prompts](https://laravel.com/docs/10.x/prompts#fallbacks) which supports macOS, Linux, and Windows with WSL. Due to limitations in the Windows version of PHP, it is not currently possible to use Laravel Prompts on Windows outside of WSL.
+
+For this reason, Laravel Prompts supports falling back to an alternative implementation such as the Symfony Console Question Helper.
 
 ## Installation
 
@@ -101,16 +112,18 @@ return [
 
 ### OpenAI and Pinecone
 
-This package uses [OpenAI](https://openai.com/) to process and generate responses and [Pinecone](https://www.pinecone.io/) to index your data. 
+This package uses [OpenAI](https://openai.com/) to process and generate responses and [Pinecone](https://www.pinecone.io/) to index your data.
 
 You will need to create an OpenAI account with credits, generate an API key and add it to your .env file:
+
 ```
 OPENAI_API_KEY=your-open-ai-key
 ```
 
-You will also need to create a Pinecone account. 
+You will also need to create a Pinecone account.
 
 The easiest way to start is with a free account - create an environment with 1536 dimensions and name it, generate an api key and add these details to your .env file:
+
 ```
 PINECONE_API_KEY=your-pinecone-api-key
 PINECONE_ENVIRONMENT=gcp-starter
@@ -144,7 +157,7 @@ You may want to force AI useage (prevent fetching from the database where availa
 
 To force AI usage, you will need to end all questions with `--ai` e.g. `Tell me about how Users are saved to the database --ai`.
 
-This will ensure the AI model will re-assess your request, and outputs another answer (this could be the same answer depending on the GPT model you are using). 
+This will ensure the AI model will re-assess your request, and outputs another answer (this could be the same answer depending on the GPT model you are using).
 
 #### Index files
 
@@ -152,11 +165,11 @@ You can index files by inputting a file name with it's namespace e.g.
 
 `App/Models/User.php`
 
-You may also index files by inputting a full directory, then use a wildcard (*) to select multiple files e.g.
+You may also index files by inputting a full directory, then use a wildcard (\*) to select multiple files e.g.
 
 `App/Models/*` or `App/Models/*.php`
 
-Please note: if you are using the '*' wildcard without an extension, this directory must only contain files and not folders, otherwise an exception will be thrown.
+Please note: if you are using the '\*' wildcard without an extension, this directory must only contain files and not folders, otherwise an exception will be thrown.
 
 #### Remove indexed files
 
@@ -176,10 +189,11 @@ You may also remove all indexes by selecting `Remove all chunked data`. Be warne
 
 #### Stopping Laragenie
 
-You can stop Laragenie using the following methods: 
-- `ctrl + c` (Linux/Mac)
-- `ctrl + shift + c` (Windows)
-- Selecting `No thanks, goodbye` in the user menu after at least 1 prompt has run.
+You can stop Laragenie using the following methods:
+
+-   `ctrl + c` (Linux/Mac)
+-   `ctrl + shift + c` (Windows)
+-   Selecting `No thanks, goodbye` in the user menu after at least 1 prompt has run.
 
 ## Changelog
 
@@ -195,8 +209,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Josh Embling](https://github.com/joshembling)
-- [All Contributors](../../contributors)
+-   [Josh Embling](https://github.com/joshembling)
+-   [All Contributors](../../contributors)
 
 ## License
 
