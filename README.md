@@ -192,7 +192,6 @@ You may also remove all indexes by selecting `Remove all chunked data`. Be warne
 You can stop Laragenie using the following methods:
 
 -   `ctrl + c` (Linux/Mac)
--   `ctrl + shift + c` (Windows)
 -   Selecting `No thanks, goodbye` in the user menu after at least 1 prompt has run.
 
 ## Changelog
