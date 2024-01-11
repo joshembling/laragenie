@@ -11,6 +11,7 @@ use Probots\Pinecone\Client as Pinecone;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
+use function Laravel\Prompts\text;
 
 class LaragenieCommand extends Command
 {
@@ -48,7 +49,7 @@ class LaragenieCommand extends Command
 
     public function askQuestion(OpenAI\Client $openai, Pinecone $pinecone)
     {
-        $user_question = $this->ask('What is your question for '.config('laragenie.bot.name'));
+        $user_question = text('What is your question for '.config('laragenie.bot.name'));
 
         if (! $user_question) {
             $this->textError('You must provide a question.');
@@ -162,7 +163,7 @@ class LaragenieCommand extends Command
 
     public function getFilesToIndex(OpenAI\Client $openai, Pinecone $pinecone)
     {
-        $user_path = $this->ask('Enter your file path');
+        $user_path = text('Enter your file path');
 
         if (! $user_path) {
             $this->textError('You must provide a path.');
@@ -242,7 +243,7 @@ class LaragenieCommand extends Command
             }
         }
 
-        $files = $this->ask('What file(s) do you want to remove from your index? (You can provide the full namespace and file extension or a directory with a wildcard)');
+        $files = text('What file(s) do you want to remove from your index? (You can provide the full namespace and file extension or a directory with a wildcard)');
 
         if (! $files) {
             $this->textError('You must provide at least one filename or a directory.');
