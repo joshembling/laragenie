@@ -2,10 +2,10 @@
 
 namespace JoshEmbling\Laragenie;
 
-use Spatie\LaravelPackageTools\Package;
 use JoshEmbling\Laragenie\Commands\LaragenieCommand;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class LaragenieServiceProvider extends PackageServiceProvider
 {
