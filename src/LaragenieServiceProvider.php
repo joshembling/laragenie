@@ -2,9 +2,10 @@
 
 namespace JoshEmbling\Laragenie;
 
-use JoshEmbling\Laragenie\Commands\LaragenieCommand;
 use Spatie\LaravelPackageTools\Package;
+use JoshEmbling\Laragenie\Commands\LaragenieCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
 class LaragenieServiceProvider extends PackageServiceProvider
 {
@@ -20,6 +21,11 @@ class LaragenieServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_laragenie_table')
-            ->hasCommand(LaragenieCommand::class);
+            ->hasCommand(LaragenieCommand::class)
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command
+                    ->publishConfigFile()
+                    ->askToStarRepoOnGitHub('joshembling/laragenie');
+            });
     }
 }
