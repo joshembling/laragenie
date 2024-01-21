@@ -122,7 +122,8 @@ class LaragenieCommand extends Command
 
         if (empty($pinecone_res->json()['matches'])) {
             $this->textError('There are no indexed files.');
-            exit();
+
+            $this->userAction($openai, $pinecone);
         }
 
         return [
@@ -163,39 +164,36 @@ class LaragenieCommand extends Command
 
     public function getFilesToIndex(OpenAI\Client $openai, Pinecone $pinecone)
     {
-        $user_path = text('Enter your file path');
+        $user_path = text('Enter your file path(s)');
 
         if (! $user_path) {
-            $this->textError('You must provide a path.');
+            $this->textError('You must provide at least one directory or file name.');
 
             $this->userAction($openai, $pinecone);
         }
 
-        $files = glob($user_path);
-
-        if (! $files) {
-            $this->textError("No files found at {$user_path}");
-
-            $this->userAction($openai, $pinecone);
-        }
+        $directories_and_files = $this->getDirectoriesAndFiles($openai, $pinecone, $user_path);
 
         $this->textNote('Indexing files...');
 
-        foreach ($files as $file) {
-            $this->textWarning('Indexing "'.$file.'" ...');
+        foreach ($directories_and_files as $dir_file) {
 
-            $contents = file_get_contents($file);
+            foreach ($dir_file as $file) {
+                $this->textWarning('Indexing "'.$file.'" ...');
 
-            $chunk_contents = str_split($contents, config('laragenie.chunks.size'));
+                $contents = file_get_contents($file);
 
-            $chunks = array_map(function ($chunk) use ($file) {
-                return "Title: {$file} {$chunk}";
-            }, $chunk_contents);
+                $chunk_contents = str_split($contents, config('laragenie.chunks.size'));
 
-            $this->indexFiles($chunks, $file, $openai, $pinecone);
+                $chunks = array_map(function ($chunk) use ($file) {
+                    return "Title: {$file} {$chunk}";
+                }, $chunk_contents);
 
-            $this->textOutput($file.' finished indexing');
-            $this->newLine();
+                $this->indexFiles($chunks, strtolower($file), $openai, $pinecone);
+
+                $this->textOutput($file.' finished indexing');
+                $this->newLine();
+            }
         }
 
         $this->newLine();
@@ -243,79 +241,123 @@ class LaragenieCommand extends Command
             }
         }
 
-        $files = text('What file(s) do you want to remove from your index? (You can provide the full namespace and file extension or a directory with a wildcard)');
+        $paths = text('What file(s) do you want to remove from your index? (You can provide a singular files, or a comma separated list of multiple directories)');
 
-        if (! $files) {
-            $this->textError('You must provide at least one filename or a directory.');
+        if (! $paths) {
+            $this->textError('You must provide a valid filename or directory.');
 
             $this->userAction($openai, $pinecone);
         }
 
         $this->question('Finding vectors...');
 
-        $this->findFilesToRemove($pinecone, $files);
+        $this->findFilesToRemove($openai, $pinecone, $paths);
 
         $this->userAction($openai, $pinecone);
     }
 
-    public function findFilesToRemove(Pinecone $pinecone, string $user_files)
+    public function findFilesToRemove(OpenAI\Client $openai, Pinecone $pinecone, string $paths)
     {
-        $files = glob($user_files);
+        //$files = glob($paths);
+        $directories_and_files = $this->getDirectoriesAndFiles($openai, $pinecone, $paths);
 
-        foreach ($files as $file) {
-            $formatted_filename = str_replace('/', '-', $file);
+        foreach ($directories_and_files as $dir_file) {
 
-            $this->textWarning('Attempting to remove all "'.$file.'" indexes...');
+            foreach ($dir_file as $file) {
+                $formatted_filename = str_replace('/', '-', $file);
 
-            for ($i = 0; $i < 100; $i++) {
-                try {
-                    $pinecone_res = $pinecone->index(env('PINECONE_INDEX'))->vectors()->fetch([
-                        "{$formatted_filename}-{$i}",
-                    ]);
-                } catch (\Throwable $th) {
-                    $this->textError('There has been an error.');
-                    break;
-                }
+                $this->textWarning('Attempting to remove all "'.$file.'" indexes...');
 
-                if ($i === 0 && empty($pinecone_res->json()['vectors'])) {
-                    $this->textWarning('No indexes were found for the file '.$file);
-                    break;
-                }
+                for ($i = 0; $i < 1000; $i++) {
+                    try {
+                        $pinecone_res = $pinecone->index(env('PINECONE_INDEX'))->vectors()->fetch([
+                            "{$formatted_filename}-{$i}",
+                        ]);
+                    } catch (\Throwable $th) {
+                        $this->textError('There has been an error.');
+                        break;
+                    }
 
-                if (config('laragenie.indexes.removal.strict') && $i === 0) {
-                    $choice = select(
-                        'Vectors have been found, are you sure you want to delete them? 🤔',
-                        [
-                            'y' => 'Yes',
-                            'n' => 'No',
-                        ],
-                    );
+                    if ($i === 0 && empty($pinecone_res->json()['vectors'])) {
+                        $this->textWarning('No indexes were found for the file '.$file);
+                        break;
+                    }
 
-                    if ($choice === 'y') {
-                        $this->question("Alright, let's bin those 🚽");
-                    } else {
-                        $this->textOutput('Nothing has been deleted 😅');
+                    if (config('laragenie.indexes.removal.strict') && $i === 0) {
+                        $choice = select(
+                            'Vectors have been found, are you sure you want to delete them? 🤔',
+                            [
+                                'y' => 'Yes',
+                                'n' => 'No',
+                            ],
+                        );
+
+                        if ($choice === 'y') {
+                            $this->question("Alright, let's bin those 🚽");
+                        } else {
+                            $this->textOutput('Nothing has been deleted 😅');
+                            break;
+                        }
+                    }
+
+                    try {
+                        $response = $pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
+                            ids: ["{$formatted_filename}-{$i}"],
+                            deleteAll: false
+                        );
+                    } catch (\Throwable $th) {
+                        $this->textError($th);
+                    }
+
+                    if (empty($pinecone_res->json()['vectors'])) {
+                        $this->textOutput('Vectors have been deleted that were associated with '.$file);
+                        $this->newLine();
+
                         break;
                     }
                 }
-
-                try {
-                    $response = $pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
-                        ids: ["{$formatted_filename}-{$i}"],
-                        deleteAll: false
-                    );
-                } catch (\Throwable $th) {
-                    $this->textError($th);
-                }
-
-                if (empty($pinecone_res->json()['vectors'])) {
-                    $this->textOutput('Vectors have been deleted that were associated with '.$file);
-                    $this->newLine();
-
-                    break;
-                }
             }
         }
+    }
+
+    public function getDirectoriesAndFiles(OpenAI\Client $openai, Pinecone $pinecone, string $user_input)
+    {
+        $directories_and_files = [];
+        $extensions = implode(',', config('laragenie.extensions'));
+        $incorrect_paths_and_files = [];
+        $paths = explode(',', $user_input);
+
+        foreach ($paths as $path) {
+            $path = trim($path);
+
+            if (Str::endsWith($path, config('laragenie.extensions'))) {
+                $directory = glob($path);
+            } else {
+                $directory = glob($path."/*.{{$extensions}}", GLOB_BRACE);
+            }
+
+            if ($directory) {
+                $directories_and_files[$path] = $directory;
+            } else {
+                $incorrect_paths_and_files[] = "{$path}";
+            }
+        }
+
+        if ($directories_and_files && $incorrect_paths_and_files) {
+            $this->textError('No files found at '.implode(', ', $incorrect_paths_and_files));
+
+            $select = $this->continueAction();
+
+            if ($select === 'n') {
+                $this->userAction($openai, $pinecone);
+            }
+        } elseif (! $directories_and_files && $incorrect_paths_and_files) {
+            $this->textError('No files found at '.implode(', ', $incorrect_paths_and_files));
+
+            $this->userAction($openai, $pinecone);
+        }
+
+        return $directories_and_files;
     }
 
     public function flushFiles(OpenAI\Client $openai, Pinecone $pinecone)
