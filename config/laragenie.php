@@ -8,6 +8,12 @@ return [
         'instructions' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks.',
     ],
 
+    'extensions' => [
+        'php',
+        'blade.php',
+        'js',
+    ],
+
     'database' => [
         'fetch' => true,
         'save' => true,
