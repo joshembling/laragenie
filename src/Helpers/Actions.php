@@ -52,6 +52,17 @@ trait Actions
         };
     }
 
+    public function continueAction()
+    {
+        return select(
+            'Do you want to continue anyway?',
+            [
+                'y' => 'Yes',
+                'n' => 'No',
+            ],
+        );
+    }
+
     public function removeAction()
     {
         return select(
