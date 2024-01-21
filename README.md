@@ -73,12 +73,29 @@ This is the contents of the published config file:
 return [
     'bot' => [
         'name' => 'Laragenie', // The name of your chatbot
+         'welcome' => 'Hello, I am Laragenie, how may I assist you today?', // Your welcome message
         'instructions' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks.', // The chatbot instructions
+    ],
+
+    'chunks' => [
+        'size' => 1000, // Maximum caracters to separate chunks
     ],
 
     'database' => [
         'fetch' => true, // Fetch saved answers from previous questions
         'save' => true, // Save answers to the database
+    ],
+
+    'extensions' => [ // The file types you want to index
+        'php',
+        'blade.php',
+        'js',
+    ],
+
+    'indexes' => [
+        'removal' => [
+            'strict' => true, // User prompt on deletion requests of indexes
+        ],
     ],
 
     'openai' => [
@@ -94,16 +111,6 @@ return [
 
     'pinecone' => [
         'topK' => 2, // Pinecone indexes to fetch
-    ],
-
-    'chunks' => [
-        'size' => 1000, // Maximum caracters to separate chunks
-    ],
-
-    'indexes' => [
-        'removal' => [
-            'strict' => true, // User prompt on deletion requests of indexes
-        ],
     ],
 ];
 ```
@@ -149,7 +156,7 @@ Use the arrow keys to toggle through the options and enter to select the command
 
 #### Ask a question
 
-Note: you should only run this action once you have some files indexed.
+**Note: you should only run this action once you have some files indexed in your vector database.**
 
 Type in any question relating to your codebase. Answers can be generated in markdown format with code examples. You will also see the cost of each response (in US dollars), which will help keep close track of the expense. Cost of the response is added to your database, if enabled.
 
@@ -161,15 +168,16 @@ This will ensure the AI model will re-assess your request, and outputs another a
 
 #### Index files
 
-You can index files by inputting a file name with it's namespace e.g.
+You can index files in the following ways: 
 
-`App/Models/User.php`
+- Inputting a file name with it's namespace e.g. `App/Models/User.php`
 
-You may also index files by inputting a full directory, then use a wildcard (\*) to select multiple files e.g.
+- Inputting a full directory, e.g. `App`
 
-`App/Models/*` or `App/Models/*.php`
+- Inputting multiple files or directories in a comma separated list e.g. `App/Models, tests/Feature, App/Http/Controllers/Controller.php`
 
-Please note: if you are using the '\*' wildcard without an extension, this directory must only contain files and not folders, otherwise an exception will be thrown.
+- Inputting multiple directories with wildcards e.g. `App/Models/*.php`
+    - Please note that the wildcards must still match the file extensions in your `laragenie` config file.
 
 #### Remove indexed files
 
@@ -185,7 +193,7 @@ Strict removal, i.e. warning messages before files are removed, can be turned on
 ],
 ```
 
-You may also remove all indexes by selecting `Remove all chunked data`. Be warned that this will truncate your entire vector database and cannot be reversed.
+You may also remove all indexes by selecting `Remove all chunked data`. **Be warned that this will truncate your entire vector database and cannot be reversed.**
 
 #### Stopping Laragenie
 

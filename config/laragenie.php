@@ -8,15 +8,25 @@ return [
         'instructions' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks.',
     ],
 
+    'chunks' => [
+        'size' => 1000,
+    ],
+
+    'database' => [
+        'fetch' => true,
+        'save' => true,
+    ],
+
     'extensions' => [
         'php',
         'blade.php',
         'js',
     ],
 
-    'database' => [
-        'fetch' => true,
-        'save' => true,
+    'indexes' => [
+        'removal' => [
+            'strict' => true,
+        ],
     ],
 
     'openai' => [
@@ -32,15 +42,5 @@ return [
 
     'pinecone' => [
         'topK' => 2,
-    ],
-
-    'chunks' => [
-        'size' => 1000,
-    ],
-
-    'indexes' => [
-        'removal' => [
-            'strict' => true,
-        ],
     ],
 ];
