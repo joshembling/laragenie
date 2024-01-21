@@ -2,6 +2,18 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.0.2 - 2024-01-21
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.3.0 to 2.3.1 by @dependabot in https://github.com/joshembling/laragenie/pull/3
+
+- Index multiple files and directories by passing in a comma separated list
+- Strict file types to index set in config
+- Updated config variables
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.1...v1.0.2
+
 ## v1.0.1 - 2023-12-21
 
 ### What's Changed
