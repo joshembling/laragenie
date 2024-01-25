@@ -31,41 +31,45 @@ class LaragenieCommand extends Command
      */
     protected $description = 'A friendly bot to help you with code in your Laravel project.';
 
-    /**
-     * Execute the console command.
-     */
+    public $openai;
+
+    public $pinecone;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->openai = OpenAI::client(env('OPENAI_API_KEY'));
+        $this->pinecone = new Pinecone(env('PINECONE_API_KEY'), env('PINECONE_ENVIRONMENT'));
+    }
+
     public function handle()
     {
-        $openai = OpenAI::client(env('OPENAI_API_KEY'));
-        $pinecone = new Pinecone(env('PINECONE_API_KEY'), env('PINECONE_ENVIRONMENT'));
-
         match ($this->welcome()) {
-            'q' => $this->askQuestion($openai, $pinecone),
-            'i' => $this->askIndex($openai, $pinecone),
-            'r' => $this->removeIndexedFiles($openai, $pinecone),
-            'o' => $this->somethingElse($openai, $pinecone),
+            'q' => $this->askQuestion(),
+            'i' => $this->askIndex(),
+            'r' => $this->removeIndexedFiles(),
+            'o' => $this->somethingElse(),
         };
     }
 
-    public function askQuestion(OpenAI\Client $openai, Pinecone $pinecone)
+    public function askQuestion()
     {
         $user_question = text('What is your question for '.config('laragenie.bot.name'));
 
         if (! $user_question) {
             $this->textError('You must provide a question.');
 
-            $this->userAction($openai, $pinecone);
+            $this->userAction();
         } else {
-            $this->userQuestion($openai, $pinecone, $user_question);
+            $this->userQuestion($user_question);
         }
     }
 
-    public function userQuestion(OpenAI\Client $openai, Pinecone $pinecone, string $user_question)
+    public function userQuestion(string $user_question)
     {
         $question = Str::lower($user_question);
-
         $ai = Str::endsWith($question, '--ai');
-
         $formattedQuestion = $ai ? Str::remove('--ai', $question) : $question;
 
         if (config('laragenie.database.fetch') || config('laragenie.database.save')) {
@@ -79,9 +83,8 @@ class LaragenieCommand extends Command
         } else {
             $this->question('Asking '.config('laragenie.bot.name').", '{$question}'...");
 
-            $questionResponse = $this->askBot($openai, $pinecone, $formattedQuestion);
-
-            $botResponse = $this->botResponse($openai, $questionResponse['data'], $question);
+            $questionResponse = $this->askBot($formattedQuestion);
+            $botResponse = $this->botResponse($questionResponse['data'], $question);
 
             if ($botResponse) {
                 $answer = $botResponse->choices[0]->message->content;
@@ -103,19 +106,19 @@ class LaragenieCommand extends Command
             }
         }
 
-        $this->userAction($openai, $pinecone);
+        $this->userAction();
     }
 
-    public function askBot(OpenAI\Client $openai, Pinecone $pinecone, string $question)
+    public function askBot(string $question)
     {
         // Use OpenAI to generate context
-        $openai_res = $openai->embeddings()->create([
+        $openai_res = $this->openai->embeddings()->create([
             'model' => config('laragenie.openai.embedding.model'),
             'input' => $question,
             'max_tokens' => config('laragenie.openai.embedding.max_tokens'),
         ]);
 
-        $pinecone_res = $pinecone->index(env('PINECONE_INDEX'))->vectors()->query(
+        $pinecone_res = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->query(
             vector: $openai_res->embeddings[0]->toArray()['embedding'],
             topK: config('laragenie.pinecone.topK'),
         );
@@ -123,7 +126,7 @@ class LaragenieCommand extends Command
         if (empty($pinecone_res->json()['matches'])) {
             $this->textError('There are no indexed files.');
 
-            $this->userAction($openai, $pinecone);
+            $this->userAction();
         }
 
         return [
@@ -132,14 +135,14 @@ class LaragenieCommand extends Command
         ];
     }
 
-    public function botResponse(OpenAI\Client $openai, $chunks, string $question)
+    public function botResponse($chunks, string $question)
     {
         $this->newLine();
         $this->textNote('Generating answer...');
 
         try {
             $response = spin(
-                fn () => $openai->chat()->create([
+                fn () => $this->openai->chat()->create([
                     'model' => config('laragenie.openai.chat.model'),
                     'temperature' => config('laragenie.openai.chat.temperature'),
                     'messages' => [
@@ -162,11 +165,10 @@ class LaragenieCommand extends Command
         return $response;
     }
 
-    public function askIndex(OpenAI\Client $openai, Pinecone $pinecone)
+    public function askIndex()
     {
-        $user_path = $this->getFilesToIndex($openai, $pinecone);
-
-        $directories_and_files = $this->getDirectoriesAndFiles($openai, $pinecone, $user_path);
+        $user_path = $this->getFilesToIndex();
+        $directories_and_files = $this->getDirectoriesAndFiles($user_path);
 
         $this->textNote('Indexing files...');
 
@@ -176,14 +178,13 @@ class LaragenieCommand extends Command
                 $this->textWarning('Indexing "'.$file.'"...');
 
                 $contents = file_get_contents($file);
-
                 $chunk_contents = str_split($contents, config('laragenie.chunks.size'));
 
                 $chunks = array_map(function ($chunk) use ($file) {
                     return "Title: {$file} {$chunk}";
                 }, $chunk_contents);
 
-                $this->indexFiles($chunks, strtolower($file), $openai, $pinecone);
+                $this->indexFiles($chunks, strtolower($file));
 
                 $this->textOutput($file.' finished indexing');
                 $this->newLine();
@@ -194,10 +195,10 @@ class LaragenieCommand extends Command
         $this->textOutput('All files have been indexed! 🎉');
         $this->newLine();
 
-        $this->userAction($openai, $pinecone);
+        $this->userAction();
     }
 
-    public function getFilesToIndex(OpenAI\Client $openai, Pinecone $pinecone)
+    public function getFilesToIndex()
     {
         $index_action = $this->indexAction();
 
@@ -214,7 +215,7 @@ class LaragenieCommand extends Command
 
             if (! config('laragenie.indexes.directories') && ! config('laragenie.indexes.files')) {
                 $this->textError('No directories or files were found in your indexes config.');
-                $this->userAction($openai, $pinecone);
+                $this->userAction();
             }
         } else {
             $user_path = text('Enter your file path(s)');
@@ -222,23 +223,23 @@ class LaragenieCommand extends Command
             if (! $user_path) {
                 $this->textError('You must provide at least one directory or file name.');
 
-                $this->userAction($openai, $pinecone);
+                $this->userAction();
             }
         }
 
         return $user_path;
     }
 
-    public function indexFiles(array $chunks, string $file, OpenAI\Client $openai, Pinecone $pinecone)
+    public function indexFiles(array $chunks, string $file)
     {
         foreach ($chunks as $idx => $chunk) {
-            $vector_response = $openai->embeddings()->create([
+            $vector_response = $this->openai->embeddings()->create([
                 'model' => config('laragenie.openai.embedding.model'),
                 'input' => $chunk,
             ]);
 
             if ($vector_response) {
-                $pinecone_upsert = $pinecone->index(env('PINECONE_INDEX'))->vectors()->upsert(vectors: [
+                $pinecone_upsert = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->upsert(vectors: [
                     'id' => str_replace('/', '-', $file).'-'.$idx,
                     //'values' => array_fill(0, 1536, 0.14),
                     'values' => $vector_response->embeddings[0]->toArray()['embedding'],
@@ -251,7 +252,7 @@ class LaragenieCommand extends Command
         }
     }
 
-    public function removeIndexedFiles(OpenAI\Client $openai, Pinecone $pinecone)
+    public function removeIndexedFiles()
     {
         $remove = $this->removeAction();
 
@@ -259,11 +260,10 @@ class LaragenieCommand extends Command
             $confirm = $this->removeAllActionConfirm();
 
             if ($confirm === 'y') {
-                $this->flushFiles($openai, $pinecone);
+                $this->flushFiles();
             } else {
                 $this->textOutput('No files have been deleted.');
-
-                $this->userAction($openai, $pinecone);
+                $this->userAction();
             }
         }
 
@@ -271,32 +271,30 @@ class LaragenieCommand extends Command
 
         if (! $paths) {
             $this->textError('You must provide a valid filename or directory.');
-
-            $this->userAction($openai, $pinecone);
+            $this->userAction();
         }
 
         $this->question('Finding vectors...');
 
-        $this->findFilesToRemove($openai, $pinecone, $paths);
+        $this->findFilesToRemove($paths);
 
-        $this->userAction($openai, $pinecone);
+        $this->userAction();
     }
 
-    public function findFilesToRemove(OpenAI\Client $openai, Pinecone $pinecone, string $paths)
+    public function findFilesToRemove(string $paths)
     {
         //$files = glob($paths);
-        $directories_and_files = $this->getDirectoriesAndFiles($openai, $pinecone, $paths);
+        $directories_and_files = $this->getDirectoriesAndFiles($paths);
 
         foreach ($directories_and_files as $dir_file) {
 
             foreach ($dir_file as $file) {
                 $formatted_filename = str_replace('/', '-', $file);
-
                 $this->textWarning('Attempting to remove all "'.$file.'" indexes...');
 
                 for ($i = 0; $i < 1000; $i++) {
                     try {
-                        $pinecone_res = $pinecone->index(env('PINECONE_INDEX'))->vectors()->fetch([
+                        $pinecone_res = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->fetch([
                             "{$formatted_filename}-{$i}",
                         ]);
                     } catch (\Throwable $th) {
@@ -327,7 +325,7 @@ class LaragenieCommand extends Command
                     }
 
                     try {
-                        $response = $pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
+                        $response = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
                             ids: ["{$formatted_filename}-{$i}"],
                             deleteAll: false
                         );
@@ -346,7 +344,7 @@ class LaragenieCommand extends Command
         }
     }
 
-    public function getDirectoriesAndFiles(OpenAI\Client $openai, Pinecone $pinecone, string $user_input)
+    public function getDirectoriesAndFiles(string $user_input)
     {
         $directories_and_files = [];
         $extensions = implode(',', config('laragenie.extensions'));
@@ -375,32 +373,29 @@ class LaragenieCommand extends Command
             $select = $this->continueAction();
 
             if ($select === 'n') {
-                $this->userAction($openai, $pinecone);
+                $this->userAction();
             }
         } elseif (! $directories_and_files && $incorrect_paths_and_files) {
             $this->textError('No files found at '.implode(', ', $incorrect_paths_and_files));
-
-            $this->userAction($openai, $pinecone);
+            $this->userAction();
         }
 
         return $directories_and_files;
     }
 
-    public function flushFiles(OpenAI\Client $openai, Pinecone $pinecone)
+    public function flushFiles()
     {
-        $pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
+        $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
             deleteAll: true
         );
 
         $this->textOutput('All files have been removed.');
-
-        $this->userAction($openai, $pinecone);
+        $this->userAction();
     }
 
-    public function somethingElse(OpenAI\Client $openai, Pinecone $pinecone)
+    public function somethingElse()
     {
         $this->textOutput('You can contact @joshembling on Github to suggest another feature.');
-
-        $this->userAction($openai, $pinecone);
+        $this->userAction();
     }
 }

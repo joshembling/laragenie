@@ -3,8 +3,6 @@
 namespace JoshEmbling\Laragenie\Helpers;
 
 use JoshEmbling\Laragenie\Helpers;
-use OpenAI;
-use Probots\Pinecone\Client as Pinecone;
 
 use function Laravel\Prompts\select;
 
@@ -30,7 +28,7 @@ trait Actions
         );
     }
 
-    public function userAction(OpenAI\Client $openai, Pinecone $pinecone)
+    public function userAction()
     {
         sleep(1);
 
@@ -45,9 +43,9 @@ trait Actions
         );
 
         match ($choice) {
-            'q' => $this->askQuestion($openai, $pinecone),
-            'i' => $this->askIndex($openai, $pinecone),
-            'r' => $this->removeIndexedFiles($openai, $pinecone),
+            'q' => $this->askQuestion(),
+            'i' => $this->askIndex(),
+            'r' => $this->removeIndexedFiles(),
             'x' => exit(),
         };
     }
