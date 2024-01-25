@@ -20,7 +20,7 @@ This is a particularly useful CLI bot that can be used to:
 
 You are not limited to indexing files based in your Laravel project. You can use this for monorepo's, or indeed any repo in any language.
 
-Use Laragenie to index any directories or files of your choosing. All you need to do is run this CLI tool from the Laravel directory. Simple, right?!
+Use Laragenie to index any directories or files of your choosing. All you need to do is run this CLI tool from the Laravel directory. Simple, right?! 🎉
 
 ## Contents
 
@@ -169,7 +169,9 @@ Type in any question relating to your codebase. Answers can be generated in mark
 
 You may want to force AI useage (prevent fetching from the database where available) if you are unsatisfied with the initial answer.
 
-To force AI usage, you will need to end all questions with `--ai` e.g. `Tell me about how Users are saved to the database --ai`.
+To force AI usage, you will need to end all questions with `--ai` e.g. 
+
+`Tell me about how Users are saved to the database --ai`.
 
 This will ensure the AI model will re-assess your request, and outputs another answer (this could be the same answer depending on the GPT model you are using).
 
@@ -203,7 +205,15 @@ You may use Laragenie in any way that you want, in that you are not limited to j
 
 For example, your Laravel project may live in a monorepo with two root entries such as `frontend` and `backend`. In this instance, you could move up one level to index the directories and files that you wish e.g. `../frontend/src/` or `../frontend/components/Component.js`.
 
-Using this method, you could technically index any files or directories you have access to. **Note: if your directories, paths or file names change, Laragenie will not be able to find the index if you want to specifically remove it later on.**
+Using this method, you could technically index any files or directories you have access to. Just make sure your extensions in your Laragenie config match all the file types that you want to index.
+
+```php
+'extensions' => [
+    'php', 'blade.php', 'js', 'jsx', 'ts', 'tsx', // etc...
+],
+```
+
+**Note: if your directories, paths or file names change, Laragenie will not be able to find the index if you decide to remove it later on.**
 
 ### Remove indexed files
 
