@@ -24,6 +24,10 @@ return [
     ],
 
     'indexes' => [
+        'directories' => [],
+
+        'files' => [],
+
         'removal' => [
             'strict' => true,
         ],
