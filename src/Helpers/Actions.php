@@ -44,8 +44,8 @@ trait Actions
 
         match ($choice) {
             'q' => $this->askQuestion(),
-            'i' => $this->askIndex(),
-            'r' => $this->removeIndexedFiles(),
+            'i' => $this->askToIndex(),
+            'r' => $this->askToRemoveIndexes(),
             'x' => exit(),
         };
     }
