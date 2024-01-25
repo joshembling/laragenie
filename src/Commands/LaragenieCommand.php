@@ -27,16 +27,16 @@ class LaragenieCommand extends Command
      */
     protected $description = 'A friendly bot to help you with code in your Laravel project.';
 
-    public $openai;
+    public OpenAI\Client $openai;
 
-    public $pinecone;
+    public Pinecone $pinecone;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->openai = OpenAI::client(env('OPENAI_API_KEY'));
-        $this->pinecone = new Pinecone(env('PINECONE_API_KEY'), env('PINECONE_ENVIRONMENT'));
+        $this->openai = OpenAI::client(env('OPENAI_API_KEY') ?? '');
+        $this->pinecone = new Pinecone(env('PINECONE_API_KEY') ?? '', env('PINECONE_ENVIRONMENT') ?? '');
     }
 
     public function handle()
