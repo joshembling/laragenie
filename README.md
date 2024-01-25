@@ -213,7 +213,7 @@ Using this method, you could technically index any files or directories you have
 ],
 ```
 
-**Note: if your directories, paths or file names change, Laragenie will not be able to find the index if you decide to remove it later on.**
+*Note: if your directories, paths or file names change, Laragenie will not be able to find the index if you decide to remove it later on (unless you truncate your entire vector database).*
 
 ### Remove indexed files
 
