@@ -1,9 +1,9 @@
-# Laragenie - AI built to understand your Laravel codebase
+# Laragenie - AI built to understand your codebases
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 [![Total Downloads](https://img.shields.io/packagist/dt/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 
-Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand your Laravel codebase following a few simple steps:
+Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand any of your codebases following a few simple steps:
 
 1. Set up your env variables [OpenAI and Pinecone](#openai-and-pinecone)
 2. Publish and update the Laragenie config
@@ -15,8 +15,12 @@ It's as simple as that! Accelerate your workflow instantly and collaborate seaml
 This is a particularly useful CLI bot that can be used to:
 
 -   Onboard developer's to new projects.
--   Assist both junior and senior developers in understanding the codebase, offering a cost-effective alternative to multiple one-on-one sessions with other developers.
+-   Assist both junior and senior developers in understanding a codebase, offering a cost-effective alternative to multiple one-on-one sessions with other developers.
 -   Provide convenient and readily available support on a daily basis as needed.
+
+You are not limited to indexing files based in your Laravel project. You can use this for monorepo's, or indeed any repo in any language.
+
+Use Laragenie to index any directories or files of your choosing. All you need to do is run this CLI tool from the Laravel directory. Simple, right?!
 
 ## Contents
 
@@ -27,6 +31,7 @@ This is a particularly useful CLI bot that can be used to:
     -   [Running Laragenie on the command line](#running-laragenie-on-the-command-line)
     -   [Ask a question](#ask-a-question)
     -   [Index files](#index-files)
+        - [Indexing files outside of your Laravel project](#indexing-files-outside-of-your-laravel-project)
     -   [Remove indexed files](#remove-indexed-files)
     -   [Stopping Laragenie](#stopping-laragenie)
 -   [Changelog](#changelog)
@@ -93,6 +98,8 @@ return [
     ],
 
     'indexes' => [
+        'directories' => [], // The directores you want to index e.g. ['App/Models', 'App/Http/Controllers', '../frontend/src']
+        'files' => [], // The files you want to index e.g. ['tests/Feature/MyTest.php']
         'removal' => [
             'strict' => true, // User prompt on deletion requests of indexes
         ],
@@ -154,7 +161,7 @@ You will get 4 options:
 
 Use the arrow keys to toggle through the options and enter to select the command.
 
-#### Ask a question
+### Ask a question
 
 **Note: you should only run this action once you have some files indexed in your vector database.**
 
@@ -166,10 +173,22 @@ To force AI usage, you will need to end all questions with `--ai` e.g. `Tell me 
 
 This will ensure the AI model will re-assess your request, and outputs another answer (this could be the same answer depending on the GPT model you are using).
 
-#### Index files
+### Index files
 
-You can index files in the following ways: 
+The quickest way to index files is to pass in singular values to the `directories` or `files` array in the Laragenie config. When you run the 'Index Files' command you will have the option to reindex these files. This will help in keeping your laragenie bot up to date.
 
+```php 
+'indexes' => [
+    'directories' => ['App/Models', 'App/Http/Controllers'],
+    'files' => ['tests/Feature/MyTest.php'],
+    'removal' => [
+        'strict' => true,
+    ],
+],
+```
+
+You can also index files in the following ways: 
+ 
 - Inputting a file name with it's namespace e.g. `App/Models/User.php`
 - Inputting a full directory, e.g. `App`
     - If you pass in a directory, Laragenie can only index files within this directory, and not its subdirectories. 
@@ -178,9 +197,21 @@ You can index files in the following ways:
 - Inputting multiple directories with wildcards e.g. `App/Models/*.php`
     - Please note that the wildcards must still match the file extensions in your `laragenie` config file.
 
-#### Remove indexed files
+#### Indexing files outside of your Laravel project
 
-You can remove indexed files using the exact same methods as above. Select the `Remove data associated with a directory or specific file` prompt as an option.
+You may use Laragenie in any way that you want, in that you are not limited to just indexing Laravel based files. 
+
+For example, your Laravel project may live in a monorepo with two root entries such as `frontend` and `backend`. In this instance, you could move up one level to index the directories and files that you wish e.g. `../frontend/src/` or `../frontend/components/Component.js`.
+
+Using this method, you could technically index any files or directories you have access to. **Note: if your directories, paths or file names change, Laragenie will not be able to find the index if you want to specifically remove it later on.**
+
+### Remove indexed files
+
+You can remove indexed files using the same methods listed above, except from using your `directories` or `files` array in the Laragenie config - this is currently for indexing purposes only. 
+
+If you want to remove all files you may do so by selecting `Remove all chunked data`. **Be warned that this will truncate your entire vector database and cannot be reversed.**
+
+To remove a comma separated list of files/directories, select the `Remove data associated with a directory or specific file` prompt as an option.
 
 Strict removal, i.e. warning messages before files are removed, can be turned on/off by changing the 'strict' attribute to false in your config.
 
@@ -192,9 +223,7 @@ Strict removal, i.e. warning messages before files are removed, can be turned on
 ],
 ```
 
-You may also remove all indexes by selecting `Remove all chunked data`. **Be warned that this will truncate your entire vector database and cannot be reversed.**
-
-#### Stopping Laragenie
+### Stopping Laragenie
 
 You can stop Laragenie using the following methods:
 
