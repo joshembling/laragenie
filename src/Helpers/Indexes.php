@@ -28,7 +28,9 @@ trait Indexes
             if ($directory) {
                 $directories_and_files[$path] = $directory;
             } else {
-                $incorrect_paths_and_files[] = "{$path}";
+                if ($path) {
+                    $incorrect_paths_and_files[] = "{$path}";
+                }
             }
         }
 
