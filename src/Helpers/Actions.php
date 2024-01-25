@@ -46,7 +46,7 @@ trait Actions
 
         match ($choice) {
             'q' => $this->askQuestion($openai, $pinecone),
-            'i' => $this->getFilesToIndex($openai, $pinecone),
+            'i' => $this->askIndex($openai, $pinecone),
             'r' => $this->removeIndexedFiles($openai, $pinecone),
             'x' => exit(),
         };
@@ -56,6 +56,17 @@ trait Actions
     {
         return select(
             'Do you want to continue anyway?',
+            [
+                'y' => 'Yes',
+                'n' => 'No',
+            ],
+        );
+    }
+
+    public function indexAction()
+    {
+        return select(
+            'Do you want to index your directories and files saved in your config?',
             [
                 'y' => 'Yes',
                 'n' => 'No',

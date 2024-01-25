@@ -41,7 +41,7 @@ class LaragenieCommand extends Command
 
         match ($this->welcome()) {
             'q' => $this->askQuestion($openai, $pinecone),
-            'i' => $this->getFilesToIndex($openai, $pinecone),
+            'i' => $this->askIndex($openai, $pinecone),
             'r' => $this->removeIndexedFiles($openai, $pinecone),
             'o' => $this->somethingElse($openai, $pinecone),
         };
@@ -162,15 +162,9 @@ class LaragenieCommand extends Command
         return $response;
     }
 
-    public function getFilesToIndex(OpenAI\Client $openai, Pinecone $pinecone)
+    public function askIndex(OpenAI\Client $openai, Pinecone $pinecone)
     {
-        $user_path = text('Enter your file path(s)');
-
-        if (! $user_path) {
-            $this->textError('You must provide at least one directory or file name.');
-
-            $this->userAction($openai, $pinecone);
-        }
+        $user_path = $this->getFilesToIndex($openai, $pinecone);
 
         $directories_and_files = $this->getDirectoriesAndFiles($openai, $pinecone, $user_path);
 
@@ -179,7 +173,7 @@ class LaragenieCommand extends Command
         foreach ($directories_and_files as $dir_file) {
 
             foreach ($dir_file as $file) {
-                $this->textWarning('Indexing "'.$file.'" ...');
+                $this->textWarning('Indexing "'.$file.'"...');
 
                 $contents = file_get_contents($file);
 
@@ -196,11 +190,43 @@ class LaragenieCommand extends Command
             }
         }
 
-        $this->newLine();
+        $this->textOutput('-------------------------------');
         $this->textOutput('All files have been indexed! 🎉');
         $this->newLine();
 
         $this->userAction($openai, $pinecone);
+    }
+
+    public function getFilesToIndex(OpenAI\Client $openai, Pinecone $pinecone)
+    {
+        $index_action = $this->indexAction();
+
+        $user_path = null;
+
+        if ($index_action === 'y') {
+            if (config('laragenie.indexes.directories') && is_array(config('laragenie.indexes.directories'))) {
+                $user_path = implode(',', config('laragenie.indexes.directories')).',';
+            }
+
+            if (config('laragenie.indexes.files') && is_array(config('laragenie.indexes.files'))) {
+                $user_path .= implode(',', config('laragenie.indexes.files'));
+            }
+
+            if (! config('laragenie.indexes.directories') && ! config('laragenie.indexes.files')) {
+                $this->textError('No directories or files were found in your indexes config.');
+                $this->userAction($openai, $pinecone);
+            }
+        } else {
+            $user_path = text('Enter your file path(s)');
+
+            if (! $user_path) {
+                $this->textError('You must provide at least one directory or file name.');
+
+                $this->userAction($openai, $pinecone);
+            }
+        }
+
+        return $user_path;
     }
 
     public function indexFiles(array $chunks, string $file, OpenAI\Client $openai, Pinecone $pinecone)
