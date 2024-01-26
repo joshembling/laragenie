@@ -12,18 +12,5 @@ class LaragenieCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // Set environment variables
-        putenv('OPENAI_API_KEY='.$this->faker->uuid);
-        putenv('PINECONE_API_KEY='.$this->faker->uuid);
-        putenv('PINECONE_ENVIRONMENT="starter"');
-        putenv('PINECONE_INDEX="test-index"');
-    }
-
-    public function test_this()
-    {
-        //$command = new LaragenieCommand();
-
-        //$command->handle();
     }
 }
