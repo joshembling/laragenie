@@ -3,7 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 [![Total Downloads](https://img.shields.io/packagist/dt/joshembling/laragenie.svg?style=flat-square)](https://packagist.org/packages/joshembling/laragenie)
 
-Laragenie is an AI chatbot that runs on the command line. It will be able to read and understand any of your codebases following a few simple steps:
+Laragenie is an AI chatbot that runs on the command line from your Laravel app. It will be able to read and understand any of your codebases following a few simple steps:
 
 1. Set up your env variables [OpenAI and Pinecone](#openai-and-pinecone)
 2. Publish and update the Laragenie config
@@ -18,9 +18,11 @@ This is a particularly useful CLI bot that can be used to:
 -   Assist both junior and senior developers in understanding a codebase, offering a cost-effective alternative to multiple one-on-one sessions with other developers.
 -   Provide convenient and readily available support on a daily basis as needed.
 
-You are not limited to indexing files based in your Laravel project. You can use this for monorepo's, or indeed any repo in any language.
+You are not limited to indexing files based in your Laravel project. You can use this for monorepo's, or indeed any repo in any language. You can of course use this tool to index files that are not code-related also.
 
-Use Laragenie to index any directories or files of your choosing. All you need to do is run this CLI tool from the Laravel directory. Simple, right?! 🎉
+All you need to do is run this CLI tool from the Laravel directory. Simple, right?! 🎉
+
+![Demo](resources/images/laragenie.gif)
 
 ## Contents
 
@@ -30,6 +32,7 @@ Use Laragenie to index any directories or files of your choosing. All you need t
     -   [OpenAI and Pinecone](#openai-and-pinecone)
     -   [Running Laragenie on the command line](#running-laragenie-on-the-command-line)
     -   [Ask a question](#ask-a-question)
+        - [Force AI](#force-ai)
     -   [Index files](#index-files)
         - [Indexing files outside of your Laravel project](#indexing-files-outside-of-your-laravel-project)
     -   [Remove indexed files](#remove-indexed-files)
@@ -78,12 +81,12 @@ This is the contents of the published config file:
 return [
     'bot' => [
         'name' => 'Laragenie', // The name of your chatbot
-         'welcome' => 'Hello, I am Laragenie, how may I assist you today?', // Your welcome message
+        'welcome' => 'Hello, I am Laragenie, how may I assist you today?', // Your welcome message
         'instructions' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks.', // The chatbot instructions
     ],
 
     'chunks' => [
-        'size' => 1000, // Maximum caracters to separate chunks
+        'size' => 1000, // Maximum number of caracters to separate chunks
     ],
 
     'database' => [
@@ -107,7 +110,7 @@ return [
 
     'openai' => [
         'embedding' => [
-            'model' => 'text-embedding-ada-002', // Text embedding model (OpenAI)
+            'model' => 'text-embedding-ada-002', // Text embedding model 
             'max_tokens' => 5, // Maximum tokens to use when embedding
         ],
         'chat' => [
@@ -128,7 +131,7 @@ return [
 
 This package uses [OpenAI](https://openai.com/) to process and generate responses and [Pinecone](https://www.pinecone.io/) to index your data.
 
-You will need to create an OpenAI account with credits, generate an API key and add it to your .env file:
+You will need to create an OpenAI account with credits, generate an API key and add it to your `.env` file:
 
 ```
 OPENAI_API_KEY=your-open-ai-key
@@ -136,7 +139,7 @@ OPENAI_API_KEY=your-open-ai-key
 
 You will also need to create a Pinecone account.
 
-The easiest way to start is with a free account - create an environment with 1536 dimensions and name it, generate an api key and add these details to your .env file:
+The easiest way to start is with a free account - create an environment with 1536 dimensions and name it, generate an api key and add these details to your `.env` file:
 
 ```
 PINECONE_API_KEY=your-pinecone-api-key
@@ -159,17 +162,21 @@ You will get 4 options:
 3. Remove indexed files
 4. Something else
 
-Use the arrow keys to toggle through the options and enter to select the command.
+Use the **arrow keys** to toggle through the options and **enter** to select the command.
 
 ### Ask a question
 
-**Note: you should only run this action once you have some files indexed in your vector database.**
+**Note: you can only run this action once you have files indexed in your vector database.**
 
-Type in any question relating to your codebase. Answers can be generated in markdown format with code examples. You will also see the cost of each response (in US dollars), which will help keep close track of the expense. Cost of the response is added to your database, if enabled.
+Type in any question relating to your codebase. Answers can be generated in markdown format with code examples, or any format of your choosing. Use the `bot.instructions` config to write AI instructions as detailed as you need to. 
 
-You may want to force AI useage (prevent fetching from the database where available) if you are unsatisfied with the initial answer.
+Beneath each response you will see the generated cost (in US dollars), which will help keep close track of the expense. Cost of the response is added to your database, if migrations are enabled.
 
-To force AI usage, you will need to end all questions with `--ai` e.g. 
+#### Force AI 
+
+If you have migrations enabled, your questions will save to your database. You may want to force AI useage (prevent fetching from the database) if you are unsatisfied with the initial answer. This will overwrite the answer already saved to the database.
+
+To force AI usage, you will need to end all questions with `--ai` flag e.g. 
 
 `Tell me about how Users are saved to the database --ai`.
 
@@ -177,7 +184,9 @@ This will ensure the AI model will re-assess your request, and outputs another a
 
 ### Index files
 
-The quickest way to index files is to pass in singular values to the `directories` or `files` array in the Laragenie config. When you run the 'Index Files' command you will have the option to reindex these files. This will help in keeping your laragenie bot up to date.
+The quickest way to index files is to pass in singular values to the `directories` or `files` array in the Laragenie config. When you run the 'Index Files' command you will always have the option to reindex these files. This will help in keeping your Laragenie bot up to date.
+
+Select 'yes', when prompted with `Do you want to index your directories and files saved in your config?`
 
 ```php 
 'indexes' => [
@@ -189,7 +198,7 @@ The quickest way to index files is to pass in singular values to the `directorie
 ],
 ```
 
-You can also index files in the following ways: 
+If you select 'no', you can also index files in the following ways: 
  
 - Inputting a file name with it's namespace e.g. `App/Models/User.php`
 - Inputting a full directory, e.g. `App`
@@ -201,9 +210,21 @@ You can also index files in the following ways:
 
 #### Indexing files outside of your Laravel project
 
-You may use Laragenie in any way that you want, in that you are not limited to just indexing Laravel based files. 
+You may use Laragenie in any way that you wish; you are not limited to just indexing Laravel based files. 
 
 For example, your Laravel project may live in a monorepo with two root entries such as `frontend` and `backend`. In this instance, you could move up one level to index the directories and files that you wish e.g. `../frontend/src/` or `../frontend/components/Component.js`.
+
+You can add these to your directories config:
+
+```php 
+'indexes' => [
+    'directories' => ['App/Models', 'App/Http/Controllers', '../frontend/src/'],
+    'files' => ['tests/Feature/MyTest.php', '../frontend/components/Component.js'],
+    'removal' => [
+        'strict' => true,
+    ],
+],
+```
 
 Using this method, you could technically index any files or directories you have access to. Just make sure your extensions in your Laragenie config match all the file types that you want to index.
 
