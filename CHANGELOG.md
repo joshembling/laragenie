@@ -2,6 +2,12 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.0.4 - 2024-01-26
+
+- Minor styling changes
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.3...v1.0.4
+
 ## v1.0.3 - 2024-01-25
 
 - Ability to configure indexed files and directories, instead of the sole option of manually typing
