@@ -24,8 +24,6 @@ trait Questions
         if ($laragenie->exists && config('laragenie.database.fetch') && ! $ai) {
             $this->textOutput($laragenie->answer);
         } else {
-            $this->question('Asking '.config('laragenie.bot.name').", '{$question}'...");
-
             $questionResponse = $this->askBot($formattedQuestion);
             $botResponse = $this->botResponse($questionResponse['data'], $question);
 

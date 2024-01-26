@@ -34,7 +34,6 @@ trait Chatbot
 
     public function botResponse($chunks, string $question)
     {
-        $this->newLine();
         $this->textNote('Generating answer...');
 
         try {
