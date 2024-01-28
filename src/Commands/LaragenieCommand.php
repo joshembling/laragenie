@@ -47,6 +47,8 @@ class LaragenieCommand extends Command
             'r' => $this->askToRemoveIndexes(),
             'o' => $this->somethingElse(),
         };
+
+        return Command::SUCCESS;
     }
 
     public function askQuestion()
@@ -55,7 +57,6 @@ class LaragenieCommand extends Command
 
         if (! $user_question) {
             $this->textError('You must provide a question.');
-
             $this->userAction();
         } else {
             $this->userQuestion($user_question);
@@ -88,7 +89,7 @@ class LaragenieCommand extends Command
             }
         }
 
-        $this->textOutput('-------------------------------');
+        $this->textOutput('───────────────────────────────');
         $this->textOutput('All files have been indexed! 🎉');
         $this->newLine();
 

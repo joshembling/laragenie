@@ -6,6 +6,8 @@ use function Laravel\Prompts\spin;
 
 trait Chatbot
 {
+    use Actions;
+
     public function askBot(string $question)
     {
         // Use OpenAI to generate context
@@ -14,7 +16,6 @@ trait Chatbot
             'input' => $question,
             'max_tokens' => config('laragenie.openai.embedding.max_tokens'),
         ]);
-
         $pinecone_res = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->query(
             vector: $openai_res->embeddings[0]->toArray()['embedding'],
             topK: config('laragenie.pinecone.topK'),
@@ -22,7 +23,6 @@ trait Chatbot
 
         if (empty($pinecone_res->json()['matches'])) {
             $this->textError('There are no indexed files.');
-
             $this->userAction();
         }
 
@@ -55,7 +55,7 @@ trait Chatbot
             );
         } catch (\Throwable $th) {
             $this->textError($th->getMessage());
-            exit();
+            $this->exitCommand();
         }
 
         return $response;

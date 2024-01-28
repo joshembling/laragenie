@@ -2,6 +2,7 @@
 
 namespace JoshEmbling\Laragenie\Helpers;
 
+use Illuminate\Console\Command;
 use JoshEmbling\Laragenie\Helpers;
 
 use function Laravel\Prompts\select;
@@ -18,7 +19,7 @@ trait Actions
         sleep(1);
 
         return select(
-            'What do you want to do? ',
+            'What do you want to do?',
             [
                 'q' => 'Ask a question 🙋‍♂️',
                 'i' => 'Index files 🗂',
@@ -38,7 +39,7 @@ trait Actions
                 'q' => 'Ask a question 🙋‍♂️',
                 'i' => 'Index files 🗂',
                 'r' => 'Remove indexed files 🚽',
-                'x' => 'No thanks, goodbye! 👋 ',
+                'x' => 'No thanks, goodbye! 👋',
             ],
         );
 
@@ -46,7 +47,7 @@ trait Actions
             'q' => $this->askQuestion(),
             'i' => $this->askToIndex(),
             'r' => $this->askToRemoveIndexes(),
-            'x' => exit(),
+            'x' => $this->exitCommand(),
         };
     }
 
@@ -92,5 +93,10 @@ trait Actions
                 'n' => 'No',
             ],
         );
+    }
+
+    public function exitCommand()
+    {
+        return Command::SUCCESS;
     }
 }
