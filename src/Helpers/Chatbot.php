@@ -2,13 +2,15 @@
 
 namespace JoshEmbling\Laragenie\Helpers;
 
+use OpenAI\Responses\Chat\CreateResponse;
+
 use function Laravel\Prompts\spin;
 
 trait Chatbot
 {
     use Actions;
 
-    public function askBot(string $question)
+    public function askBot(string $question): array
     {
         // Use OpenAI to generate context
         $openai_res = $this->openai->embeddings()->create([
@@ -32,7 +34,7 @@ trait Chatbot
         ];
     }
 
-    public function botResponse($chunks, string $question)
+    public function botResponse($chunks, string $question): CreateResponse
     {
         $this->textNote('Generating answer...');
 

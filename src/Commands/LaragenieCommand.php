@@ -51,7 +51,7 @@ class LaragenieCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function askQuestion()
+    public function askQuestion(): void
     {
         $user_question = text('What is your question for '.config('laragenie.bot.name'));
 
@@ -63,40 +63,41 @@ class LaragenieCommand extends Command
         }
     }
 
-    public function askToIndex()
+    public function askToIndex(): void
     {
-        $user_path = $this->getFilesToIndex();
-        $directories_and_files = $this->getDirectoriesAndFiles($user_path);
+        $index_action = $this->indexAction();
 
-        $this->textNote('Indexing files...');
+        $user_path = null;
 
-        foreach ($directories_and_files as $dir_file) {
+        if ($index_action === 'y') {
+            if (config('laragenie.indexes.directories') && is_array(config('laragenie.indexes.directories'))) {
+                $user_path = implode(',', config('laragenie.indexes.directories')).',';
+            }
 
-            foreach ($dir_file as $file) {
-                $this->textWarning('Indexing "'.$file.'"...');
+            if (config('laragenie.indexes.files') && is_array(config('laragenie.indexes.files'))) {
+                $user_path .= implode(',', config('laragenie.indexes.files'));
+            }
 
-                $contents = file_get_contents($file);
-                $chunk_contents = str_split($contents, config('laragenie.chunks.size'));
+            if (! config('laragenie.indexes.directories') && ! config('laragenie.indexes.files')) {
+                $this->textError('No directories or files were found in your indexes config.');
+                $this->userAction();
+            }
+        } else {
+            $user_path = text('Enter your file path(s)');
 
-                $chunks = array_map(function ($chunk) use ($file) {
-                    return "Title: {$file} {$chunk}";
-                }, $chunk_contents);
+            if (! $user_path) {
+                $this->textError('You must provide at least one directory or file name.');
 
-                $this->indexFiles($chunks, strtolower($file));
-
-                $this->textOutput($file.' finished indexing');
-                $this->newLine();
+                $this->userAction();
             }
         }
 
-        $this->textOutput('───────────────────────────────');
-        $this->textOutput('All files have been indexed! 🎉');
-        $this->newLine();
+        $directories_and_files = $this->getDirectoriesAndFiles($user_path);
 
-        $this->userAction();
+        $this->getFilesToIndex($directories_and_files);
     }
 
-    public function askToRemoveIndexes()
+    public function askToRemoveIndexes(): void
     {
         $remove = $this->removeAction();
 
@@ -129,7 +130,7 @@ class LaragenieCommand extends Command
         $this->userAction();
     }
 
-    public function somethingElse()
+    public function somethingElse(): void
     {
         $this->textOutput('You can contact @joshembling on Github to suggest another feature.');
         $this->userAction();

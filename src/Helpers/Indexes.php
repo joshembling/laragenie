@@ -5,11 +5,10 @@ namespace JoshEmbling\Laragenie\Helpers;
 use Illuminate\Support\Str;
 
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\text;
 
 trait Indexes
 {
-    public function getDirectoriesAndFiles(string $user_input)
+    public function getDirectoriesAndFiles(string $user_input): array
     {
         $directories_and_files = [];
         $extensions = implode(',', config('laragenie.extensions'));
@@ -50,39 +49,37 @@ trait Indexes
         return $directories_and_files;
     }
 
-    public function getFilesToIndex()
+    public function getFilesToIndex($directories_and_files): void
     {
-        $index_action = $this->indexAction();
+        $this->textNote('Indexing files...');
 
-        $user_path = null;
+        foreach ($directories_and_files as $dir_file) {
 
-        if ($index_action === 'y') {
-            if (config('laragenie.indexes.directories') && is_array(config('laragenie.indexes.directories'))) {
-                $user_path = implode(',', config('laragenie.indexes.directories')).',';
-            }
+            foreach ($dir_file as $file) {
+                $this->textWarning('Indexing "'.$file.'"...');
 
-            if (config('laragenie.indexes.files') && is_array(config('laragenie.indexes.files'))) {
-                $user_path .= implode(',', config('laragenie.indexes.files'));
-            }
+                $contents = file_get_contents($file);
+                $chunk_contents = str_split($contents, config('laragenie.chunks.size'));
 
-            if (! config('laragenie.indexes.directories') && ! config('laragenie.indexes.files')) {
-                $this->textError('No directories or files were found in your indexes config.');
-                $this->userAction();
-            }
-        } else {
-            $user_path = text('Enter your file path(s)');
+                $chunks = array_map(function ($chunk) use ($file) {
+                    return "Title: {$file} {$chunk}";
+                }, $chunk_contents);
 
-            if (! $user_path) {
-                $this->textError('You must provide at least one directory or file name.');
+                $this->indexFiles($chunks, strtolower($file));
 
-                $this->userAction();
+                $this->textOutput($file.' finished indexing');
+                $this->newLine();
             }
         }
 
-        return $user_path;
+        $this->textOutput('───────────────────────────────');
+        $this->textOutput('All files have been indexed! 🎉');
+        $this->newLine();
+
+        $this->userAction();
     }
 
-    public function indexFiles(array $chunks, string $file)
+    public function indexFiles(array $chunks, string $file): void
     {
         foreach ($chunks as $idx => $chunk) {
             $vector_response = $this->openai->embeddings()->create([
@@ -104,9 +101,8 @@ trait Indexes
         }
     }
 
-    public function removeIndexedFiles(string $paths)
+    public function removeIndexedFiles(string $paths): void
     {
-        //$files = glob($paths);
         $directories_and_files = $this->getDirectoriesAndFiles($paths);
 
         foreach ($directories_and_files as $dir_file) {
@@ -167,7 +163,7 @@ trait Indexes
         }
     }
 
-    public function flushFiles()
+    public function flushFiles(): void
     {
         $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
             deleteAll: true

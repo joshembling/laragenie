@@ -9,11 +9,16 @@ trait Questions
 {
     use Chatbot;
 
-    public function userQuestion(string $user_question)
+    public function userQuestion(string $user_question): void
     {
         $question = Str::lower($user_question);
         $ai = Str::endsWith($question, '--ai');
-        $formattedQuestion = $ai ? Str::remove('--ai', $question) : $question;
+
+        if ($ai) {
+            $formattedQuestion = Str::remove('--ai', $question);
+        } else {
+            $formattedQuestion = $question;
+        }
 
         if (config('laragenie.database.fetch') || config('laragenie.database.save')) {
             $laragenie = LaragenieModel::firstOrNew([

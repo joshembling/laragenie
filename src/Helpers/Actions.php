@@ -2,7 +2,6 @@
 
 namespace JoshEmbling\Laragenie\Helpers;
 
-use Illuminate\Console\Command;
 use JoshEmbling\Laragenie\Helpers;
 
 use function Laravel\Prompts\select;
@@ -97,6 +96,6 @@ trait Actions
 
     public function exitCommand()
     {
-        return Command::SUCCESS;
+        exit;
     }
 }
