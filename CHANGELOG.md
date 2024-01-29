@@ -2,6 +2,13 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.0.6 - 2024-01-29
+
+- Minor bug fixes
+- Return types
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.5...v1.0.6
+
 ## v1.0.5 - 2024-01-29
 
 - Updates CLI styles
