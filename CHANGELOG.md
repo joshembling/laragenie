@@ -2,6 +2,13 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.0.5 - 2024-01-29
+
+- Updates CLI styles
+- Test updates
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.4...v1.0.5
+
 ## v1.0.4 - 2024-01-26
 
 - Minor styling changes
