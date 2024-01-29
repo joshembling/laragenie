@@ -46,7 +46,7 @@ All you need to do is run this CLI tool from the Laravel directory. Simple, righ
 ## Requirements
 
 -   Laravel 10 or greater
--   PHP 8 or greater
+-   PHP 8.1 or greater
 
 This package uses [Laravel Prompts](https://laravel.com/docs/10.x/prompts#fallbacks) which supports macOS, Linux, and Windows with WSL. Due to limitations in the Windows version of PHP, it is not currently possible to use Laravel Prompts on Windows outside of WSL.
 
@@ -82,7 +82,7 @@ return [
     'bot' => [
         'name' => 'Laragenie', // The name of your chatbot
         'welcome' => 'Hello, I am Laragenie, how may I assist you today?', // Your welcome message
-        'instructions' => 'Write only in markdown format. Only write factual data that can be pulled from indexed chunks.', // The chatbot instructions
+        'instructions' => 'Write in markdown format. Try to only use factual data that can be pulled from indexed chunks.', // The chatbot instructions
     ],
 
     'chunks' => [
@@ -166,23 +166,33 @@ Use the **arrow keys** to toggle through the options and **enter** to select the
 
 ### Ask a question
 
-**Note: you can only run this action once you have files indexed in your vector database.**
+![Demo](resources/images/question.png)
 
-Type in any question relating to your codebase. Answers can be generated in markdown format with code examples, or any format of your choosing. Use the `bot.instructions` config to write AI instructions as detailed as you need to. 
+**Note: you can only run this action once you have files indexed in your Pinecone vector database (skip to the ‘Index Files’ section if you wish to find out how to start indexing).**
+
+When your vector database has indexes you’ll be able to ask any questions relating to your codebase.
+
+Answers can be generated in markdown format with code examples, or any format of your choosing. Use the `bot.instructions` config to write AI instructions as detailed as you need to. 
 
 Beneath each response you will see the generated cost (in US dollars), which will help keep close track of the expense. Cost of the response is added to your database, if migrations are enabled.
 
+*Costs can vary, but small responses will be less than $0.01. Much larger responses can be between $0.02–0.05.*
+
 #### Force AI 
 
-If you have migrations enabled, your questions will save to your database. You may want to force AI useage (prevent fetching from the database) if you are unsatisfied with the initial answer. This will overwrite the answer already saved to the database.
+As previously mentioned, when you have migrations enabled your questions will save to your database.
 
-To force AI usage, you will need to end all questions with `--ai` flag e.g. 
+However, you may want to force AI usage (prevent fetching from the database) if you are unsatisfied with the initial answer. This will overwrite the answer already saved to the database.
 
-`Tell me about how Users are saved to the database --ai`.
+To force an AI response, you will need to end all questions with an `--ai` flag e.g.
+
+`Tell me how users are saved to the database --ai`.
 
 This will ensure the AI model will re-assess your request, and outputs another answer (this could be the same answer depending on the GPT model you are using).
 
 ### Index files
+
+![Demo](resources/images/index.png)
 
 The quickest way to index files is to pass in singular values to the `directories` or `files` array in the Laragenie config. When you run the 'Index Files' command you will always have the option to reindex these files. This will help in keeping your Laragenie bot up to date.
 
@@ -208,13 +218,15 @@ If you select 'no', you can also index files in the following ways:
 - Inputting multiple directories with wildcards e.g. `App/Models/*.php`
     - Please note that the wildcards must still match the file extensions in your `laragenie` config file.
 
+![Demo](resources/images/index-2.png)
+
 #### Indexing files outside of your Laravel project
 
 You may use Laragenie in any way that you wish; you are not limited to just indexing Laravel based files. 
 
-For example, your Laravel project may live in a monorepo with two root entries such as `frontend` and `backend`. In this instance, you could move up one level to index the directories and files that you wish e.g. `../frontend/src/` or `../frontend/components/Component.js`.
+For example, your Laravel project may live in a monorepo with two root entries such as `frontend` and `backend`. In this instance, you could move up one level to index more directories and files e.g. `../frontend/src/` or `../frontend/components/Component.js`.
 
-You can add these to your directories config:
+You can add these to your `directories` and `files` in the Laragenie config:
 
 ```php 
 'indexes' => [
@@ -226,7 +238,9 @@ You can add these to your directories config:
 ],
 ```
 
-Using this method, you could technically index any files or directories you have access to. Just make sure your extensions in your Laragenie config match all the file types that you want to index.
+Using this same method, you could technically index any files or directories you have access to on your server or local machine.
+
+**Ensure your extensions in your Laragenie config match all the file types that you want to index.**
 
 ```php
 'extensions' => [
@@ -234,13 +248,17 @@ Using this method, you could technically index any files or directories you have
 ],
 ```
 
-*Note: if your directories, paths or file names change, Laragenie will not be able to find the index if you decide to remove it later on (unless you truncate your entire vector database).*
+*Note: if your directories, paths or file names change, Laragenie will not be able to find the index if you decide to update/remove it later on (unless you truncate your entire vector database, or go into Pinecone and delete them manually).*
 
-### Remove indexed files
+### Removing indexed files
+
+![Demo](resources/images/rm-index.png)
 
 You can remove indexed files using the same methods listed above, except from using your `directories` or `files` array in the Laragenie config - this is currently for indexing purposes only. 
 
 If you want to remove all files you may do so by selecting `Remove all chunked data`. **Be warned that this will truncate your entire vector database and cannot be reversed.**
+
+![Demo](resources/images/truncate.png)
 
 To remove a comma separated list of files/directories, select the `Remove data associated with a directory or specific file` prompt as an option.
 
@@ -260,6 +278,8 @@ You can stop Laragenie using the following methods:
 
 -   `ctrl + c` (Linux/Mac)
 -   Selecting `No thanks, goodbye` in the user menu after at least 1 prompt has run.
+
+Have fun using Laragenie! 🤖
 
 ## Changelog
 
