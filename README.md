@@ -218,7 +218,7 @@ If you select 'no', you can also index files in the following ways:
 - Inputting multiple directories with wildcards e.g. `App/Models/*.php`
     - Please note that the wildcards must still match the file extensions in your `laragenie` config file.
 
-<img src='resources/images/index-2.png' width='700'>
+<img src='resources/images/index-3.png' width='700'>
 
 #### Indexing files outside of your Laravel project
 
