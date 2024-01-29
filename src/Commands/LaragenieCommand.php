@@ -111,7 +111,11 @@ class LaragenieCommand extends Command
             }
         }
 
-        $paths = text('What file(s) do you want to remove from your index? (You can provide a singular files, or a comma separated list of multiple directories)');
+        $paths = text(
+            label: 'What file(s) do you want to remove from your index?',
+            placeholder: 'E.g. App/Models, tests/Feature/MyTest.php',
+            hint: 'Comma seperated list of singular files, multiple directories etc.'
+        );
 
         if (! $paths) {
             $this->textError('You must provide a valid filename or directory.');
