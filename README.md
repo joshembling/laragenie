@@ -166,7 +166,7 @@ Use the **arrow keys** to toggle through the options and **enter** to select the
 
 ### Ask a question
 
-![Demo](resources/images/question.png)
+<img src='resources/images/question.png' width='700'>
 
 **Note: you can only run this action once you have files indexed in your Pinecone vector database (skip to the ‘Index Files’ section if you wish to find out how to start indexing).**
 
@@ -192,7 +192,7 @@ This will ensure the AI model will re-assess your request, and outputs another a
 
 ### Index files
 
-![Demo](resources/images/index.png)
+<img src='resources/images/index.png' width='700'>
 
 The quickest way to index files is to pass in singular values to the `directories` or `files` array in the Laragenie config. When you run the 'Index Files' command you will always have the option to reindex these files. This will help in keeping your Laragenie bot up to date.
 
@@ -218,7 +218,7 @@ If you select 'no', you can also index files in the following ways:
 - Inputting multiple directories with wildcards e.g. `App/Models/*.php`
     - Please note that the wildcards must still match the file extensions in your `laragenie` config file.
 
-![Demo](resources/images/index-2.png)
+<img src='resources/images/index-2.png' width='700'>
 
 #### Indexing files outside of your Laravel project
 
@@ -252,13 +252,13 @@ Using this same method, you could technically index any files or directories you
 
 ### Removing indexed files
 
-![Demo](resources/images/rm-index.png)
+<img src='resources/images/rm-index.png' width='700'>
 
 You can remove indexed files using the same methods listed above, except from using your `directories` or `files` array in the Laragenie config - this is currently for indexing purposes only. 
 
 If you want to remove all files you may do so by selecting `Remove all chunked data`. **Be warned that this will truncate your entire vector database and cannot be reversed.**
 
-![Demo](resources/images/truncate.png)
+<img src='resources/images/truncate.png' width='700'>
 
 To remove a comma separated list of files/directories, select the `Remove data associated with a directory or specific file` prompt as an option.
 
