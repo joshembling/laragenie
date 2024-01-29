@@ -192,7 +192,7 @@ This will ensure the AI model will re-assess your request, and outputs another a
 
 ### Index files
 
-<img src='resources/images/index.png' width='700'>
+<img src='resources/images/index-3.png' width='700'>
 
 The quickest way to index files is to pass in singular values to the `directories` or `files` array in the Laragenie config. When you run the 'Index Files' command you will always have the option to reindex these files. This will help in keeping your Laragenie bot up to date.
 
@@ -217,8 +217,6 @@ If you select 'no', you can also index files in the following ways:
 - Inputting multiple files or directories in a comma separated list e.g. `App/Models, tests/Feature, App/Http/Controllers/Controller.php`
 - Inputting multiple directories with wildcards e.g. `App/Models/*.php`
     - Please note that the wildcards must still match the file extensions in your `laragenie` config file.
-
-<img src='resources/images/index-3.png' width='700'>
 
 #### Indexing files outside of your Laravel project
 
