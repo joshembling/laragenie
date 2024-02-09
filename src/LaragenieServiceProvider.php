@@ -19,7 +19,6 @@ class LaragenieServiceProvider extends PackageServiceProvider
         $package
             ->name('laragenie')
             ->hasConfigFile()
-            ->hasViews()
             ->hasMigration('create_laragenie_table')
             ->hasCommand(LaragenieCommand::class)
             ->hasInstallCommand(function (InstallCommand $command) {
