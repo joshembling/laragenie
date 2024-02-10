@@ -15,9 +15,9 @@ trait Questions
         $ai = Str::endsWith($question, '--ai');
 
         if ($ai) {
-            $formattedQuestion = Str::remove('--ai', $question);
+            $formattedQuestion = trim(Str::remove('--ai', $question));
         } else {
-            $formattedQuestion = $question;
+            $formattedQuestion = trim($question);
         }
 
         if (config('laragenie.database.fetch') || config('laragenie.database.save')) {
