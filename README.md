@@ -86,7 +86,7 @@ return [
     ],
 
     'chunks' => [
-        'size' => 1000, // Maximum number of caracters to separate chunks
+        'size' => 1000, // Maximum number of characters to separate chunks
     ],
 
     'database' => [
