@@ -2,6 +2,13 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.0.62 - 2024-02-10
+
+- Formatted question input by removing excess whitespace
+- Updated package description
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.61...v1.0.62
+
 ## v1.0.61 - 2024-02-10
 
 ### What's Changed
