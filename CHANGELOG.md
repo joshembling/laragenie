@@ -2,6 +2,18 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.0.61 - 2024-02-10
+
+### What's Changed
+
+* remove hasViews() by @zbora23 in https://github.com/joshembling/laragenie/pull/7
+
+### New Contributors
+
+* @zbora23 made their first contribution in https://github.com/joshembling/laragenie/pull/7
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.6...v1.0.61
+
 ## v1.0.6 - 2024-01-29
 
 - Minor bug fixes
