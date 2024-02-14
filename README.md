@@ -212,8 +212,7 @@ If you select 'no', you can also index files in the following ways:
  
 - Inputting a file name with it's namespace e.g. `App/Models/User.php`
 - Inputting a full directory, e.g. `App`
-    - If you pass in a directory, Laragenie can only index files within this directory, and not its subdirectories. 
-    - To index subdirectories you must explicitly pass the path e.g. `App/Models` to index all of your models
+    - If you pass in a directory, Laragenie will index all files, including sudirectories, recursively
 - Inputting multiple files or directories in a comma separated list e.g. `App/Models, tests/Feature, App/Http/Controllers/Controller.php`
 - Inputting multiple directories with wildcards e.g. `App/Models/*.php`
     - Please note that the wildcards must still match the file extensions in your `laragenie` config file.

@@ -4,6 +4,8 @@ namespace JoshEmbling\Laragenie\Helpers;
 
 use Illuminate\Support\Str;
 
+use Illuminate\Support\Facades\File;
+use Symfony\Component\Finder\SplFileInfo;
 use function Laravel\Prompts\select;
 
 trait Indexes
@@ -11,9 +13,9 @@ trait Indexes
     public function getDirectoriesAndFiles(string $user_input): array
     {
         $directories_and_files = [];
-        $extensions = implode(',', config('laragenie.extensions'));
+        $extensions = config('laragenie.extensions');
         $incorrect_paths_and_files = [];
-        $paths = explode(',', $user_input);
+        $paths = explode(',', rtrim($user_input, ','));
 
         foreach ($paths as $path) {
             $path = trim($path);
@@ -21,7 +23,10 @@ trait Indexes
             if (Str::endsWith($path, config('laragenie.extensions'))) {
                 $directory = glob($path);
             } else {
-                $directory = glob($path."/*.{{$extensions}}", GLOB_BRACE);
+                $directory = collect(File::allFiles($path))
+                    ->filter(fn (SplFileInfo $file) => in_array($file->getExtension(), $extensions))
+                    ->map(fn (SplFileInfo $file) => $file->getPathname())
+                    ->toArray();
             }
 
             if ($directory) {
