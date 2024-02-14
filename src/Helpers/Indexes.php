@@ -2,8 +2,8 @@
 
 namespace JoshEmbling\Laragenie\Helpers;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
 
 use function Laravel\Prompts\select;
