@@ -33,11 +33,11 @@ return [
 
     'openai' => [
         'embedding' => [
-            'model' => 'text-embedding-ada-002',
+            'model' => 'text-embedding-3-small',
             'max_tokens' => 5,
         ],
         'chat' => [
-            'model' => 'gpt-4-1106-preview',
+            'model' => 'gpt-4-turbo-preview',
             'temperature' => 0.1,
         ],
     ],
