@@ -110,11 +110,11 @@ return [
 
     'openai' => [
         'embedding' => [
-            'model' => 'text-embedding-ada-002', // Text embedding model 
+            'model' => 'text-embedding-3-small', // Text embedding model 
             'max_tokens' => 5, // Maximum tokens to use when embedding
         ],
         'chat' => [
-            'model' => 'gpt-4-1106-preview', // Your OpenAI GPT model
+            'model' => 'gpt-4-turbo-preview', // Your OpenAI GPT model
             'temperature' => 0.1, // Set temperature on the model
         ],
     ],
