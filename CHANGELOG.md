@@ -2,6 +2,17 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.0.63 - 2024-02-17
+
+### What's Changed
+
+- Debugging instructions added to documentation as per issues https://github.com/joshembling/laragenie/issues/4 and https://github.com/joshembling/laragenie/issues/6
+- Instructions from config now passed correctly, issue https://github.com/joshembling/laragenie/issues/8
+- All chunks now used in AI response, issue https://github.com/joshembling/laragenie/issues/9
+- Update OpenAI models in config to latest versions by default by @zbora23 in https://github.com/joshembling/laragenie/pull/11
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.62...v1.0.63
+
 ## v1.0.62 - 2024-02-10
 
 - Formatted question input by removing excess whitespace
