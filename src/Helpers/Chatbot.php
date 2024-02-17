@@ -29,12 +29,12 @@ trait Chatbot
         }
 
         return [
-            'data' => $pinecone_res->json()['matches'][0]['metadata']['text'],
+            'data' => $pinecone_res->json()['matches'],
             'vectors' => $openai_res->embeddings[0]->toArray()['embedding'],
         ];
     }
 
-    public function botResponse($chunks, string $question): CreateResponse
+    public function botResponse(string $chunks, string $question): CreateResponse
     {
         $this->textNote('Generating answer...');
 
@@ -46,7 +46,7 @@ trait Chatbot
                     'messages' => [
                         [
                             'role' => 'system',
-                            'content' => config('laragenie.bot.instruction').$chunks,
+                            'content' => config('laragenie.bot.instructions').$chunks,
                         ],
                         [
                             'role' => 'user',

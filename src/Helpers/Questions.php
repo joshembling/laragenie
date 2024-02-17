@@ -29,8 +29,16 @@ trait Questions
         if ($laragenie->exists && config('laragenie.database.fetch') && ! $ai) {
             $this->textOutput($laragenie->answer);
         } else {
-            $questionResponse = $this->askBot($formattedQuestion);
-            $botResponse = $this->botResponse($questionResponse['data'], $question);
+            $results = (array) $this->askBot($formattedQuestion);
+            $embeddings = [];
+
+            foreach ($results['data'] as $key => $result) {
+                $embeddings[$key] = $result['metadata']['text'];
+            }
+
+            $chunks = implode(',', $embeddings);
+
+            $botResponse = $this->botResponse($chunks, $question);
 
             if ($botResponse) {
                 $answer = $botResponse->choices[0]->message->content;
@@ -41,7 +49,7 @@ trait Questions
                     $laragenie->fill([
                         'answer' => $answer,
                         'cost' => $calculatedCost,
-                        'vectors' => $questionResponse['vectors'],
+                        'vectors' => $results['vectors'],
                     ]);
 
                     $laragenie->save();
