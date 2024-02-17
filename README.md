@@ -115,7 +115,7 @@ return [
         ],
         'chat' => [
             'model' => 'gpt-4-turbo-preview', // Your OpenAI GPT model
-            'temperature' => 0.1, // Set temperature on the model
+            'temperature' => 0.1, // Set temperature between 0 and 1 (lower values will have less irrelevance)
         ],
     ],
 
