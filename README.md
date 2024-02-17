@@ -37,6 +37,8 @@ All you need to do is run this CLI tool from the Laravel directory. Simple, righ
         - [Indexing files outside of your Laravel project](#indexing-files-outside-of-your-laravel-project)
     -   [Remove indexed files](#remove-indexed-files)
     -   [Stopping Laragenie](#stopping-laragenie)
+-   [Debugging](#debugging)
+    -   [API Keys](#api-keys)
 -   [Changelog](#changelog)
 -   [Contributing](#contributing)
 -   [Security Vulnerabilities](#security-vulnerabilities)
@@ -138,6 +140,8 @@ OPENAI_API_KEY=your-open-ai-key
 ```
 
 You will also need to create a Pinecone account.
+
+**Important: When creating a Pinecone account, you must use a regular account and NOT a serverless account (new as of late 2023). When you are hinted to select an option on account creation, ensure you select the old method.**
 
 The easiest way to start is with a free account - create an environment with 1536 dimensions and name it, generate an api key and add these details to your `.env` file:
 
@@ -278,6 +282,18 @@ You can stop Laragenie using the following methods:
 -   Selecting `No thanks, goodbye` in the user menu after at least 1 prompt has run.
 
 Have fun using Laragenie! 🤖
+
+## Debugging
+
+### API Keys
+- If you have correctly added the required `.env` variables, but get an error such as "You didn't provide an API key", you may need to clear your cache and config:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+
+- Likewise, if you get a 404 response and a Saloon exception when trying any of the four options, it's likely you do not have a non-serverless Pinecone database set up. Please see [OpenAI and Pinecone](#openai-and-pinecone).
 
 ## Changelog
 
