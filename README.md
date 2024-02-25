@@ -24,6 +24,8 @@ All you need to do is run this CLI tool from the Laravel directory. Simple, righ
 
 ![Demo](resources/images/laragenie.gif)
 
+[!NOTE] If you are upgrading from version ^1.0.63 > 1.1, there is a change to Pinecone environment variables. Please see [OpenAI and Pinecone](#openai-and-pinecone).
+
 ## Contents
 
 -   [Requirements](#requirements)
@@ -139,11 +141,33 @@ You will need to create an OpenAI account with credits, generate an API key and 
 OPENAI_API_KEY=your-open-ai-key
 ```
 
-You will also need to create a Pinecone account.
+[!WARNING] If you are using a Laragenie version prior to 1.1 and do not want to upgrade, go straight to [Legacy Pinecone](#legacy-pinecone).
 
-**Important: When creating a Pinecone account, you must use a regular account and NOT a serverless account (new as of late 2023). When you are hinted to select an option on account creation, ensure you select the old method.**
+You will need to create a Pinecone account. There are two diferent types of account you can set up: 
 
-The easiest way to start is with a free account - create an environment with 1536 dimensions and name it, generate an api key and add these details to your `.env` file:
+1. Serverless
+2. Pod-based index (legacy)
+
+As of early 2024, Pinecone recommend you start with a serverless account. You can optionally set up an account with a payment method attached to get $100 in free credits, however, a free account allows up to 100,000 indexes - likely more than enough for any small-medium sized application.
+
+Create an index with 1536 dimensions and the metric as 'cosine'. Then generate an api key and add these details to your `.env` file:
+
+```
+PINECONE_API_KEY=an-example-pinecone-api-key
+PINECONE_INDEX_HOST='https://an-example-url.aaa.gcp-starter.pinecone.io'
+```
+
+*Tip: Your host can be seen in the information box on your index page, alongside the metric, dimensions, pod type, cloud, region and environment.*
+
+[!INFO] If you are upgrading to Laragenie ^1.1, you can safely remove the legacy environment variables: `PINECONE_ENVIRONMENT` and `PINECONE_INDEX`.
+
+#### Legacy Pinecone
+
+[!NOTE] This is for Laragenie versions prior to 1.1.
+
+**Important: If you are using Laragenie 1.0.63 or prior, you must use a regular Pinecone account and NOT a serverless account. When you are hinted to select an option on account creation, ensure you select 'Continue with pod-based index'.**
+
+Create an environment with 1536 dimensions and name it, generate an api key and add these details to your `.env` file:
 
 ```
 PINECONE_API_KEY=your-pinecone-api-key
