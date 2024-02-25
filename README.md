@@ -329,7 +329,7 @@ php artisan config:clear
 php artisan cache:clear
 ```
 
-- Likewise, if you get a 404 response and a Saloon exception when trying any of the four options, it's likely you do not have a non-serverless Pinecone database set up. Please see [OpenAI and Pinecone](#openai-and-pinecone).
+- Likewise, if you get a 404 response and a Saloon exception when trying any of the four options, it's likely you do not have a non-serverless Pinecone database set up and are using a Laragenie version prior to 1.1. Please see [OpenAI and Pinecone](#openai-and-pinecone).
 
 ## Changelog
 
