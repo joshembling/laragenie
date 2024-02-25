@@ -88,7 +88,7 @@ trait Indexes
             ]);
 
             if ($vector_response) {
-                $pinecone_upsert = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->upsert(vectors: [
+                $pinecone_upsert = $this->pinecone->data()->vectors()->upsert(vectors: [
                     'id' => str_replace('/', '-', $file).'-'.$idx,
                     //'values' => array_fill(0, 1536, 0.14),
                     'values' => $vector_response->embeddings[0]->toArray()['embedding'],
@@ -113,7 +113,7 @@ trait Indexes
 
                 for ($i = 0; $i < 1000; $i++) {
                     try {
-                        $pinecone_res = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->fetch([
+                        $pinecone_res = $this->pinecone->data()->vectors()->fetch([
                             "{$formatted_filename}-{$i}",
                         ]);
                     } catch (\Throwable $th) {
@@ -144,7 +144,7 @@ trait Indexes
                     }
 
                     try {
-                        $response = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
+                        $response = $this->pinecone->data()->vectors()->delete(
                             ids: ["{$formatted_filename}-{$i}"],
                             deleteAll: false
                         );
@@ -165,7 +165,7 @@ trait Indexes
 
     public function flushFiles(): void
     {
-        $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->delete(
+        $this->pinecone->data()->vectors()->delete(
             deleteAll: true
         );
 

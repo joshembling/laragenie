@@ -36,7 +36,7 @@ class LaragenieCommand extends Command
         parent::__construct();
 
         $this->openai = OpenAI::client(env('OPENAI_API_KEY') ?? '');
-        $this->pinecone = new Pinecone(env('PINECONE_API_KEY') ?? '', env('PINECONE_ENVIRONMENT') ?? '');
+        $this->pinecone = new Pinecone(env('PINECONE_API_KEY') ?? '', env('PINECONE_INDEX_HOST') ?? '');
     }
 
     public function handle()

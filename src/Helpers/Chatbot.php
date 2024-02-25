@@ -18,7 +18,8 @@ trait Chatbot
             'input' => $question,
             'max_tokens' => config('laragenie.openai.embedding.max_tokens'),
         ]);
-        $pinecone_res = $this->pinecone->index(env('PINECONE_INDEX'))->vectors()->query(
+
+        $pinecone_res = $this->pinecone->data()->vectors()->query(
             vector: $openai_res->embeddings[0]->toArray()['embedding'],
             topK: config('laragenie.pinecone.topK'),
         );
