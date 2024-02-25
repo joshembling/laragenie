@@ -25,7 +25,7 @@ All you need to do is run this CLI tool from the Laravel directory. Simple, righ
 ![Demo](resources/images/laragenie.gif)
 
 > [!NOTE]  
-> If you are upgrading from version ^1.0.63 > 1.1, there is a change to Pinecone environment variables. Please see [OpenAI and Pinecone](#openai-and-pinecone).
+> If you are upgrading from a Laragenie version `^1.0.63 > 1.1`, there is a change to Pinecone environment variables. Please see [OpenAI and Pinecone](#openai-and-pinecone).
 
 ## Contents
 
@@ -33,6 +33,9 @@ All you need to do is run this CLI tool from the Laravel directory. Simple, righ
 -   [Installation](#installation)
 -   [Useage](#usage)
     -   [OpenAI and Pinecone](#openai-and-pinecone)
+        - [OpenAI](#openai)
+        - [Pinecone](#pinecone)
+            - [Legacy Pinecone](#legacy-pinecone)
     -   [Running Laragenie on the command line](#running-laragenie-on-the-command-line)
     -   [Ask a question](#ask-a-question)
         - [Force AI](#force-ai)
@@ -134,6 +137,8 @@ return [
 
 ### OpenAI and Pinecone
 
+#### OpenAI
+
 This package uses [OpenAI](https://openai.com/) to process and generate responses and [Pinecone](https://www.pinecone.io/) to index your data.
 
 You will need to create an OpenAI account with credits, generate an API key and add it to your `.env` file:
@@ -142,13 +147,17 @@ You will need to create an OpenAI account with credits, generate an API key and 
 OPENAI_API_KEY=your-open-ai-key
 ```
 
+<hr>
+
+#### Pinecone
+
 > [!IMPORTANT]  
 > If you are using a Laragenie version prior to 1.1 and do not want to upgrade, go straight to [Legacy Pinecone](#legacy-pinecone).
 
 You will need to create a Pinecone account. There are two diferent types of account you can set up: 
 
 1. Serverless
-2. Pod-based index (legacy)
+2. Pod-based index 
 
 As of early 2024, Pinecone recommend you start with a serverless account. You can optionally set up an account with a payment method attached to get $100 in free credits, however, a free account allows up to 100,000 indexes - likely more than enough for any small-medium sized application.
 
@@ -159,15 +168,14 @@ PINECONE_API_KEY=an-example-pinecone-api-key
 PINECONE_INDEX_HOST='https://an-example-url.aaa.gcp-starter.pinecone.io'
 ```
 
-*Tip: Your host can be seen in the information box on your index page, alongside the metric, dimensions, pod type, cloud, region and environment.*
+*Your host can be seen in the information box on your index page, alongside the metric, dimensions, pod type, cloud, region and environment.*
+
+<hr>
 
 > [!TIP]  
 > If you are upgrading to Laragenie ^1.1, you can safely remove the legacy environment variables: `PINECONE_ENVIRONMENT` and `PINECONE_INDEX`.
 
-#### Legacy Pinecone
-
-> [!NOTE]  
-> This is for Laragenie versions prior to 1.1 only.
+##### Legacy Pinecone
 
 **Important: If you are using Laragenie 1.0.63 or prior, you must use a regular Pinecone account and NOT a serverless account. When you are hinted to select an option on account creation, ensure you select 'Continue with pod-based index'.**
 
