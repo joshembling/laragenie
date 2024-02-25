@@ -2,6 +2,16 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.1.0 - 2024-02-25
+
+**NOTE: v1.1.0 is a major version change. There is a breaking change to the previous minor version (v1.0.63). You must add `PINECONE_INDEX_HOST` to your .env file, please read the docs for more information.**
+
+- Upgrade to latest Pinecone SDK, which enables the use of serverless accounts, as well as pod-based indexes
+- Introduces one new environment variable `PINECONE_INDEX_HOST`
+- Removes legacy environment variables `PINECONE_ENVIRONMENT` and `PINECONE_INDEX`
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.0.63...v1.1.0
+
 ## v1.0.63 - 2024-02-17
 
 ### What's Changed
