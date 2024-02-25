@@ -20,7 +20,7 @@ trait Actions
         return select(
             'What do you want to do?',
             [
-                'q' => 'Ask a question 🙋‍♂️',
+                'q' => 'Ask a question 🙋',
                 'i' => 'Index files 🗂',
                 'r' => 'Remove indexed files 🚽',
                 'o' => 'Something else 🤔',
@@ -35,7 +35,7 @@ trait Actions
         $choice = select(
             'Do you want to do something else?',
             [
-                'q' => 'Ask a question 🙋‍♂️',
+                'q' => 'Ask a question 🙋',
                 'i' => 'Index files 🗂',
                 'r' => 'Remove indexed files 🚽',
                 'x' => 'No thanks, goodbye! 👋',
