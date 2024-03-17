@@ -51,10 +51,14 @@ All you need to do is run this CLI tool from the Laravel directory. Simple, righ
 -   [Credits](#credits)
 -   [Licence](#license)
 
-## Requirements
+## Minimum Requirements
 
--   Laravel 10 or greater
--   PHP 8.1 or greater
+For specific versions that match your PHP, Laravel and Laragenie versions please see the table below:
+
+| PHP | Laravel version | Laragenie version |
+| ----- | ----- | ----- |
+| ^8.1 | ^10.0 | >=1.0 <1.2 |
+| ^8.2 | ^10.0, ^11.0 | ^1.2.0 |
 
 This package uses [Laravel Prompts](https://laravel.com/docs/10.x/prompts#fallbacks) which supports macOS, Linux, and Windows with WSL. Due to limitations in the Windows version of PHP, it is not currently possible to use Laravel Prompts on Windows outside of WSL.
 
