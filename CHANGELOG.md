@@ -2,6 +2,13 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.2.0 - 2024-03-17
+
+- Support for Laravel 11
+- Minimum PHP version now 8.2
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.1.0...v1.2.0
+
 ## v1.1.0 - 2024-02-25
 
 **NOTE: v1.1.0 is a major version change. There is a breaking change to the previous minor version (v1.0.63). You must add `PINECONE_INDEX_HOST` to your .env file, please read the docs for more information.**
