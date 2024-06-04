@@ -113,7 +113,7 @@ return [
     ],
 
     'indexes' => [
-        'directories' => [], // The directores you want to index e.g. ['App/Models', 'App/Http/Controllers', '../frontend/src']
+        'directories' => [], // The directores you want to index e.g. ['app/Models', 'app/Http/Controllers', '../frontend/src']
         'files' => [], // The files you want to index e.g. ['tests/Feature/MyTest.php']
         'removal' => [
             'strict' => true, // User prompt on deletion requests of indexes
@@ -244,7 +244,7 @@ Select 'yes', when prompted with `Do you want to index your directories and file
 
 ```php 
 'indexes' => [
-    'directories' => ['App/Models', 'App/Http/Controllers'],
+    'directories' => ['app/Models', 'app/Http/Controllers'],
     'files' => ['tests/Feature/MyTest.php'],
     'removal' => [
         'strict' => true,
@@ -272,7 +272,7 @@ You can add these to your `directories` and `files` in the Laragenie config:
 
 ```php 
 'indexes' => [
-    'directories' => ['App/Models', 'App/Http/Controllers', '../frontend/src/'],
+    'directories' => ['app/Models', 'app/Http/Controllers', '../frontend/src/'],
     'files' => ['tests/Feature/MyTest.php', '../frontend/components/Component.js'],
     'removal' => [
         'strict' => true,
