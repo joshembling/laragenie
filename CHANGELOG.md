@@ -2,6 +2,19 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.2.1 - 2024-06-22
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.3.1 to 2.4 by @dependabot in https://github.com/joshembling/laragenie/pull/13
+* README - Swap App with app by @tominal in https://github.com/joshembling/laragenie/pull/15
+
+### New Contributors
+
+* @tominal made their first contribution in https://github.com/joshembling/laragenie/pull/15
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.2.0...v1.2.1
+
 ## v1.2.0 - 2024-03-17
 
 - Support for Laravel 11
