@@ -113,7 +113,7 @@ return [
     ],
 
     'indexes' => [
-        'directories' => [], // The directores you want to index e.g. ['App/Models', 'App/Http/Controllers', '../frontend/src']
+        'directories' => [], // The directores you want to index e.g. ['app/Models', 'app/Http/Controllers', '../frontend/src']
         'files' => [], // The files you want to index e.g. ['tests/Feature/MyTest.php']
         'removal' => [
             'strict' => true, // User prompt on deletion requests of indexes
@@ -244,7 +244,7 @@ Select 'yes', when prompted with `Do you want to index your directories and file
 
 ```php 
 'indexes' => [
-    'directories' => ['App/Models', 'App/Http/Controllers'],
+    'directories' => ['app/Models', 'app/Http/Controllers'],
     'files' => ['tests/Feature/MyTest.php'],
     'removal' => [
         'strict' => true,
@@ -254,12 +254,12 @@ Select 'yes', when prompted with `Do you want to index your directories and file
 
 If you select 'no', you can also index files in the following ways: 
  
-- Inputting a file name with it's namespace e.g. `App/Models/User.php`
+- Inputting a file name with it's namespace e.g. `app/Models/User.php`
 - Inputting a full directory, e.g. `App`
     - If you pass in a directory, Laragenie can only index files within this directory, and not its subdirectories. 
-    - To index subdirectories you must explicitly pass the path e.g. `App/Models` to index all of your models
-- Inputting multiple files or directories in a comma separated list e.g. `App/Models, tests/Feature, App/Http/Controllers/Controller.php`
-- Inputting multiple directories with wildcards e.g. `App/Models/*.php`
+    - To index subdirectories you must explicitly pass the path e.g. `app/Models` to index all of your models
+- Inputting multiple files or directories in a comma separated list e.g. `app/Models, tests/Feature, app/Http/Controllers/Controller.php`
+- Inputting multiple directories with wildcards e.g. `app/Models/*.php`
     - Please note that the wildcards must still match the file extensions in your `laragenie` config file.
 
 #### Indexing files outside of your Laravel project
@@ -272,7 +272,7 @@ You can add these to your `directories` and `files` in the Laragenie config:
 
 ```php 
 'indexes' => [
-    'directories' => ['App/Models', 'App/Http/Controllers', '../frontend/src/'],
+    'directories' => ['app/Models', 'app/Http/Controllers', '../frontend/src/'],
     'files' => ['tests/Feature/MyTest.php', '../frontend/components/Component.js'],
     'removal' => [
         'strict' => true,
