@@ -2,6 +2,18 @@
 
 All notable changes to `laragenie` will be documented in this file.
 
+## v1.2.2 - 2024-08-05
+
+### What's Changed
+
+* Change conditions order in Questions.php by @fredmarmillod in https://github.com/joshembling/laragenie/pull/19
+
+### New Contributors
+
+* @fredmarmillod made their first contribution in https://github.com/joshembling/laragenie/pull/19
+
+**Full Changelog**: https://github.com/joshembling/laragenie/compare/v1.2.1...v1.2.2
+
 ## v1.2.1 - 2024-06-22
 
 ### What's Changed
