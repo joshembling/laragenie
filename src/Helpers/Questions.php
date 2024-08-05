@@ -26,7 +26,7 @@ trait Questions
             ]);
         }
 
-        if ($laragenie->exists && config('laragenie.database.fetch') && ! $ai) {
+        if (config('laragenie.database.fetch') && $laragenie->exists && ! $ai) {
             $this->textOutput($laragenie->answer);
         } else {
             $results = (array) $this->askBot($formattedQuestion);
